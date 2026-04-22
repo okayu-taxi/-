@@ -1,121 +1,72 @@
 import { useState, useEffect, useCallback } from 'react';
-import { type Vehicle, type WashRecord, type WashType } from '../types';
+import { type Vehicle } from '../types';
 
-const VEHICLES_KEY = 'taxi_wash_vehicles';
-const RECORDS_KEY = 'taxi_wash_records';
+const STORAGE_KEY = 'taxi_wash_v2';
 
-function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-function loadFromStorage<T>(key: string, fallback: T): T {
+function load(): Vehicle[] {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Vehicle[]) : [];
   } catch {
-    return fallback;
+    return [];
   }
 }
 
-function saveToStorage<T>(key: string, data: T): void {
-  localStorage.setItem(key, JSON.stringify(data));
-}
-
 export function useStore() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>(() =>
-    loadFromStorage<Vehicle[]>(VEHICLES_KEY, [])
-  );
-  const [records, setRecords] = useState<WashRecord[]>(() =>
-    loadFromStorage<WashRecord[]>(RECORDS_KEY, [])
-  );
+  const [vehicles, setVehicles] = useState<Vehicle[]>(load);
 
   useEffect(() => {
-    saveToStorage(VEHICLES_KEY, vehicles);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
   }, [vehicles]);
 
-  useEffect(() => {
-    saveToStorage(RECORDS_KEY, records);
-  }, [records]);
-
-  const addVehicle = useCallback(
-    (data: Omit<Vehicle, 'id' | 'lastWashedAt' | 'createdAt'>) => {
-      const vehicle: Vehicle = {
-        ...data,
-        id: generateId(),
-        lastWashedAt: null,
-        createdAt: new Date().toISOString(),
-      };
-      setVehicles((prev) => [...prev, vehicle]);
-      return vehicle;
-    },
-    []
-  );
-
-  const updateVehicle = useCallback(
-    (id: string, data: Partial<Omit<Vehicle, 'id' | 'createdAt'>>) => {
-      setVehicles((prev) =>
-        prev.map((v) => (v.id === id ? { ...v, ...data } : v))
-      );
-    },
-    []
-  );
+  const addVehicle = useCallback((plateNumber: string) => {
+    const v: Vehicle = {
+      id: generateId(),
+      plateNumber: plateNumber.trim(),
+      washDates: [],
+      createdAt: new Date().toISOString(),
+    };
+    setVehicles((prev) => [...prev, v]);
+    return v;
+  }, []);
 
   const deleteVehicle = useCallback((id: string) => {
     setVehicles((prev) => prev.filter((v) => v.id !== id));
-    setRecords((prev) => prev.filter((r) => r.vehicleId !== id));
   }, []);
 
-  const addWashRecord = useCallback(
-    (data: { vehicleId: string; washType: WashType; scheduledAt: string; notes: string; cost: number }) => {
-      const record: WashRecord = {
-        ...data,
-        id: generateId(),
-        status: 'pending',
-        completedAt: null,
-        createdAt: new Date().toISOString(),
-      };
-      setRecords((prev) => [...prev, record]);
-      return record;
-    },
-    []
-  );
+  const toggleWashDate = useCallback((vehicleId: string, date: string) => {
+    setVehicles((prev) =>
+      prev.map((v) => {
+        if (v.id !== vehicleId) return v;
+        const has = v.washDates.includes(date);
+        return {
+          ...v,
+          washDates: has
+            ? v.washDates.filter((d) => d !== date)
+            : [...v.washDates, date].sort(),
+        };
+      })
+    );
+  }, []);
 
-  const updateRecordStatus = useCallback(
-    (id: string, status: WashRecord['status']) => {
-      const now = new Date().toISOString();
-      setRecords((prev) =>
-        prev.map((r) => {
-          if (r.id !== id) return r;
-          const updated = { ...r, status, completedAt: status === 'completed' ? now : r.completedAt };
-          return updated;
-        })
-      );
-      if (status === 'completed') {
-        const record = records.find((r) => r.id === id);
-        if (record) {
-          setVehicles((prev) =>
-            prev.map((v) =>
-              v.id === record.vehicleId ? { ...v, lastWashedAt: now } : v
-            )
-          );
-        }
+  const getCountsByDate = useCallback((): Record<string, number> => {
+    const counts: Record<string, number> = {};
+    for (const v of vehicles) {
+      for (const d of v.washDates) {
+        counts[d] = (counts[d] ?? 0) + 1;
       }
-    },
-    [records]
+    }
+    return counts;
+  }, [vehicles]);
+
+  const getVehiclesForDate = useCallback(
+    (date: string): Vehicle[] => vehicles.filter((v) => v.washDates.includes(date)),
+    [vehicles]
   );
 
-  const deleteRecord = useCallback((id: string) => {
-    setRecords((prev) => prev.filter((r) => r.id !== id));
-  }, []);
-
-  return {
-    vehicles,
-    records,
-    addVehicle,
-    updateVehicle,
-    deleteVehicle,
-    addWashRecord,
-    updateRecordStatus,
-    deleteRecord,
-  };
+  return { vehicles, addVehicle, deleteVehicle, toggleWashDate, getCountsByDate, getVehiclesForDate };
 }
