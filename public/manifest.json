@@ -2,14 +2,15 @@
   "name": "タクシー洗車管理",
   "short_name": "洗車管理",
   "description": "タクシーの洗車スケジュールを管理するアプリ",
-  "start_url": "/",
+  "start_url": "/taxi-car-wash/",
+  "scope": "/taxi-car-wash/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon.svg",
+      "src": "/taxi-car-wash/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
