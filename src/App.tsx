@@ -320,50 +320,53 @@ export default function App() {
       <div className="app-shell">
         <PageTitle title="車両編集" />
 
-        <form onSubmit={handleEditSave} className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">車番</label>
-            <input
-              value={editPlate}
-              onChange={(e) => setEditPlate(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-              required
-              autoCapitalize="none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">顧客名</label>
-            <input
-              value={editCustomer}
-              onChange={(e) => setEditCustomer(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">帰車時刻</label>
-            <input
-              type="time"
-              value={editReturnTime}
-              onChange={(e) => setEditReturnTime(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-3 bg-black text-white text-sm rounded-lg mt-4"
-          >
-            保存
-          </button>
-          <button
-            type="button"
-            onClick={() => openSchedule(editingVehicle)}
-            className="w-full py-3 border border-gray-200 text-sm rounded-lg"
-          >
-            洗車日を設定
-          </button>
-        </form>
+        <div className="flex-1" />
 
-        <BottomBack onBack={() => setView('vehicles')} />
+        <div className="border-t border-gray-100 shrink-0">
+          <form onSubmit={handleEditSave} className="px-4 pt-4 pb-2 space-y-3">
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">車番</label>
+              <input
+                value={editPlate}
+                onChange={(e) => setEditPlate(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+                required
+                autoCapitalize="none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">顧客名</label>
+              <input
+                value={editCustomer}
+                onChange={(e) => setEditCustomer(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">帰車時刻</label>
+              <input
+                type="time"
+                value={editReturnTime}
+                onChange={(e) => setEditReturnTime(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-black text-white text-sm rounded-lg"
+            >
+              保存
+            </button>
+            <button
+              type="button"
+              onClick={() => openSchedule(editingVehicle)}
+              className="w-full py-3 border border-gray-200 text-sm rounded-lg"
+            >
+              洗車日を設定
+            </button>
+          </form>
+          <BottomBack onBack={() => setView('vehicles')} />
+        </div>
       </div>
     );
   }
