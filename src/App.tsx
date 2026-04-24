@@ -279,22 +279,20 @@ export default function App() {
             <span className="text-gray-300">締日: 毎月15日</span>
           </div>
           <form onSubmit={handleAdd} className="px-4 py-3 space-y-2">
-            <div className="flex gap-2">
-              <input
-                value={newPlate}
-                onChange={(e) => setNewPlate(e.target.value)}
-                placeholder="車番 *"
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-                autoCapitalize="none"
-                required
-              />
-              <input
-                value={newCustomer}
-                onChange={(e) => setNewCustomer(e.target.value)}
-                placeholder="顧客名"
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-              />
-            </div>
+            <input
+              value={newPlate}
+              onChange={(e) => setNewPlate(e.target.value)}
+              placeholder="車番 *"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+              autoCapitalize="none"
+              required
+            />
+            <input
+              value={newCustomer}
+              onChange={(e) => setNewCustomer(e.target.value)}
+              placeholder="顧客名"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+            />
             <div className="flex gap-2">
               <input
                 type="time"
