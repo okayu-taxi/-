@@ -1,13 +1,15 @@
 import { useMemo } from 'react';
 
-const DOW = ['日', '月', '火', '水', '木', '金', '土'];
+const DOW = ['月', '火', '水', '木', '金', '土', '日'];
 
 function toDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 function buildGrid(year: number, month: number): (number | null)[] {
-  const firstDow = new Date(year, month, 1).getDay();
+  // getDay(): 0=Sun … 6=Sat → convert to Mon-based: Mon=0 … Sun=6
+  const rawDow = new Date(year, month, 1).getDay();
+  const firstDow = (rawDow + 6) % 7;
   const lastDay = new Date(year, month + 1, 0).getDate();
   const cells: (number | null)[] = [
     ...Array<null>(firstDow).fill(null),
@@ -64,7 +66,7 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
         <button
           onClick={() => onMonthChange(ny, nm)}
           className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
-          aria-label="翌月"
+          aria-label="経月"
         >
           ›
         </button>
@@ -75,7 +77,7 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
         {DOW.map((d, i) => (
           <div
             key={d}
-            className={`text-center text-xs py-1 ${i === 0 || i === 6 ? 'text-gray-300' : 'text-gray-400'}`}
+            className={`text-center text-xs py-1 ${i === 5 || i === 6 ? 'text-gray-300' : 'text-gray-400'}`}
           >
             {d}
           </div>
