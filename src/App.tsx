@@ -21,13 +21,20 @@ function sortByReturnTime(vehicles: Vehicle[]): Vehicle[] {
 }
 
 // ── shared nav ──────────────────────────────────────────────────────────────────────────────
-function NavBar({ title, onBack }: { title: string; onBack: () => void }) {
+function PageTitle({ title }: { title: string }) {
   return (
-    <div className="relative flex items-center justify-center h-14 px-4 border-b border-gray-100 pt-safe shrink-0">
-      <button onClick={onBack} className="absolute left-4 w-11 h-11 flex items-center justify-center text-lg text-black">
-        ←
-      </button>
+    <div className="flex items-center justify-center h-12 px-4 border-b border-gray-100 pt-safe shrink-0">
       <span className="text-sm font-medium">{title}</span>
+    </div>
+  );
+}
+
+function BottomBack({ onBack, label = '← 戻る' }: { onBack: () => void; label?: string }) {
+  return (
+    <div className="border-t border-gray-100 pb-safe shrink-0">
+      <button onClick={onBack} className="w-full h-14 text-sm text-black flex items-center justify-center">
+        {label}
+      </button>
     </div>
   );
 }
@@ -200,7 +207,7 @@ export default function App() {
   if (view === 'vehicles') {
     return (
       <div className="app-shell">
-        <NavBar title="車両管理" onBack={() => setView('main')} />
+        <PageTitle title="車両管理" />
 
         <form onSubmit={handleAdd} className="px-4 py-3 border-b border-gray-100 shrink-0 space-y-2">
           <div className="flex gap-2">
@@ -296,11 +303,13 @@ export default function App() {
           )}
         </div>
 
-        {/* legend */}
-        <div className="px-4 py-2 border-t border-gray-100 flex gap-4 text-xs pb-safe">
-          <span className="text-yellow-500">● 当期未予約</span>
-          <span className="text-red-500">● 前日未予約</span>
-          <span className="text-gray-300">締日: 毎月15日</span>
+        <div className="border-t border-gray-100 shrink-0">
+          <div className="px-4 py-2 flex gap-4 text-xs">
+            <span className="text-yellow-500">● 当期未予約</span>
+            <span className="text-red-500">● 前日未予約</span>
+            <span className="text-gray-300">締日: 毎月15日</span>
+          </div>
+          <BottomBack onBack={() => setView('main')} />
         </div>
       </div>
     );
@@ -310,9 +319,9 @@ export default function App() {
   if (view === 'edit' && editingVehicle) {
     return (
       <div className="app-shell">
-        <NavBar title="車両編集" onBack={() => setView('vehicles')} />
+        <PageTitle title="車両編集" />
 
-        <form onSubmit={handleEditSave} className="flex-1 px-4 py-4 space-y-4">
+        <form onSubmit={handleEditSave} className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
           <div>
             <label className="block text-xs text-gray-400 mb-1">車番</label>
             <input
@@ -354,6 +363,8 @@ export default function App() {
             洗車日を設定
           </button>
         </form>
+
+        <BottomBack onBack={() => setView('vehicles')} />
       </div>
     );
   }
@@ -362,7 +373,7 @@ export default function App() {
   if (view === 'schedule' && editingVehicle) {
     return (
       <div className="app-shell">
-        <NavBar title={`${editingVehicle.plateNumber} の洗車日`} onBack={() => setView('vehicles')} />
+        <PageTitle title={`${editingVehicle.plateNumber} の洗車日`} />
 
         <div className="flex-1 overflow-y-auto px-4">
           <MonthCalendar
@@ -377,13 +388,16 @@ export default function App() {
           </p>
         </div>
 
-        <div className="px-4 pb-safe border-t border-gray-100">
-          <button
-            onClick={() => setView('main')}
-            className="w-full py-3 bg-black text-white text-sm rounded-lg my-3"
-          >
-            確定してホームへ
-          </button>
+        <div className="border-t border-gray-100 pb-safe shrink-0">
+          <div className="px-4 pt-3 pb-1">
+            <button
+              onClick={() => setView('main')}
+              className="w-full py-3 bg-black text-white text-sm rounded-lg"
+            >
+              確定してホームへ
+            </button>
+          </div>
+          <BottomBack onBack={() => setView('vehicles')} label="← 車両一覧へ戻る" />
         </div>
       </div>
     );
@@ -393,7 +407,7 @@ export default function App() {
   if (view === 'backup') {
     return (
       <div className="app-shell">
-        <NavBar title="バックアップ" onBack={() => setView('main')} />
+        <PageTitle title="バックアップ" />
 
         <div className="flex-1 px-4 py-6 space-y-6">
           <div>
@@ -437,6 +451,8 @@ export default function App() {
             </p>
           </div>
         </div>
+
+        <BottomBack onBack={() => setView('main')} />
       </div>
     );
   }
