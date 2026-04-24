@@ -365,9 +365,18 @@ export default function App() {
             selectedDates={editingVehicle.washDates}
             onDateToggle={(date) => toggleWashDate(editingVehicle.id, date)}
           />
-          <p className="text-xs text-gray-300 text-center pb-6">
+          <p className="text-xs text-gray-300 text-center mb-4">
             日付をタップして洗車日を設定 / 解除
           </p>
+        </div>
+
+        <div className="px-4 pb-safe border-t border-gray-100">
+          <button
+            onClick={() => setView('main')}
+            className="w-full py-3 bg-black text-white text-sm rounded-lg my-3"
+          >
+            確定してホームへ
+          </button>
         </div>
       </div>
     );
