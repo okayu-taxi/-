@@ -20,11 +20,15 @@ function sortByReturnTime(vehicles: Vehicle[]): Vehicle[] {
   });
 }
 
-function BackButton({ onBack }: { onBack: () => void }) {
+// ── shared nav ──────────────────────────────────────────────────────────────────────────────
+function NavBar({ title, onBack }: { title: string; onBack: () => void }) {
   return (
-    <button onClick={onBack} className="w-11 h-11 flex items-center text-sm text-black">
-      ←
-    </button>
+    <div className="relative flex items-center justify-center h-14 px-4 border-b border-gray-100 pt-safe shrink-0">
+      <button onClick={onBack} className="absolute left-4 w-11 h-11 flex items-center justify-center text-lg text-black">
+        ←
+      </button>
+      <span className="text-sm font-medium">{title}</span>
+    </div>
   );
 }
 
@@ -47,10 +51,12 @@ export default function App() {
   const [calMonth, setCalMonth] = useState(now.getMonth());
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  // forms
   const [newPlate, setNewPlate] = useState('');
   const [newCustomer, setNewCustomer] = useState('');
   const [newReturnTime, setNewReturnTime] = useState('');
 
+  // edit form
   const [editPlate, setEditPlate] = useState('');
   const [editCustomer, setEditCustomer] = useState('');
   const [editReturnTime, setEditReturnTime] = useState('');
@@ -71,6 +77,7 @@ export default function App() {
     [vehicles, editingId]
   );
 
+  // sorted vehicle list: red → yellow → none
   const sortedVehicles = useMemo(() => {
     const order: Record<string, number> = { red: 0, yellow: 1, none: 2 };
     return [...vehicles].sort(
@@ -100,6 +107,7 @@ export default function App() {
     setNewPlate('');
     setNewCustomer('');
     setNewReturnTime('');
+    // immediately open schedule
     setEditingId(v.id);
     setCalYear(now.getFullYear());
     setCalMonth(now.getMonth());
@@ -130,6 +138,7 @@ export default function App() {
     e.target.value = '';
   }
 
+  // ── MAIN ───────────────────────────────────────────────────────────────────────────
   if (view === 'main') {
     return (
       <div className="app-shell">
@@ -187,13 +196,11 @@ export default function App() {
     );
   }
 
+  // ── VEHICLE LIST ──────────────────────────────────────────────────────────────────────
   if (view === 'vehicles') {
     return (
       <div className="app-shell">
-        <div className="flex items-center h-12 px-4 border-b border-gray-100 pt-safe shrink-0">
-          <BackButton onBack={() => setView('main')} />
-          <span className="text-sm font-medium">車両管理</span>
-        </div>
+        <NavBar title="車両管理" onBack={() => setView('main')} />
 
         <form onSubmit={handleAdd} className="px-4 py-3 border-b border-gray-100 shrink-0 space-y-2">
           <div className="flex gap-2">
@@ -289,6 +296,7 @@ export default function App() {
           )}
         </div>
 
+        {/* legend */}
         <div className="px-4 py-2 border-t border-gray-100 flex gap-4 text-xs pb-safe">
           <span className="text-yellow-500">● 当期未予約</span>
           <span className="text-red-500">● 前日未予約</span>
@@ -298,13 +306,11 @@ export default function App() {
     );
   }
 
+  // ── EDIT VEHICLE ─────────────────────────────────────────────────────────────────────
   if (view === 'edit' && editingVehicle) {
     return (
       <div className="app-shell">
-        <div className="flex items-center h-12 px-4 border-b border-gray-100 pt-safe shrink-0">
-          <BackButton onBack={() => setView('vehicles')} />
-          <span className="text-sm font-medium">車両編集</span>
-        </div>
+        <NavBar title="車両編集" onBack={() => setView('vehicles')} />
 
         <form onSubmit={handleEditSave} className="flex-1 px-4 py-4 space-y-4">
           <div>
@@ -334,7 +340,10 @@ export default function App() {
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
             />
           </div>
-          <button type="submit" className="w-full py-3 bg-black text-white text-sm rounded-lg mt-4">
+          <button
+            type="submit"
+            className="w-full py-3 bg-black text-white text-sm rounded-lg mt-4"
+          >
             保存
           </button>
           <button
@@ -349,13 +358,11 @@ export default function App() {
     );
   }
 
+  // ── SCHEDULE EDITOR ────────────────────────────────────────────────────────────────────────
   if (view === 'schedule' && editingVehicle) {
     return (
       <div className="app-shell">
-        <div className="flex items-center h-12 px-4 border-b border-gray-100 pt-safe shrink-0">
-          <BackButton onBack={() => setView('vehicles')} />
-          <span className="text-sm font-medium">{editingVehicle.plateNumber} の洗車日</span>
-        </div>
+        <NavBar title={`${editingVehicle.plateNumber} の洗車日`} onBack={() => setView('vehicles')} />
 
         <div className="flex-1 overflow-y-auto px-4">
           <MonthCalendar
@@ -382,13 +389,11 @@ export default function App() {
     );
   }
 
+  // ── BACKUP ──────────────────────────────────────────────────────────────────────────────
   if (view === 'backup') {
     return (
       <div className="app-shell">
-        <div className="flex items-center h-12 px-4 border-b border-gray-100 pt-safe shrink-0">
-          <BackButton onBack={() => setView('main')} />
-          <span className="text-sm font-medium">バックアップ</span>
-        </div>
+        <NavBar title="バックアップ" onBack={() => setView('main')} />
 
         <div className="flex-1 px-4 py-6 space-y-6">
           <div>
