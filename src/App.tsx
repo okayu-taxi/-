@@ -209,37 +209,6 @@ export default function App() {
       <div className="app-shell">
         <PageTitle title="車両管理" />
 
-        <form onSubmit={handleAdd} className="px-4 py-3 border-b border-gray-100 shrink-0 space-y-2">
-          <div className="flex gap-2">
-            <input
-              value={newPlate}
-              onChange={(e) => setNewPlate(e.target.value)}
-              placeholder="車番 *"
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-              autoCapitalize="none"
-              required
-            />
-            <input
-              value={newCustomer}
-              onChange={(e) => setNewCustomer(e.target.value)}
-              placeholder="顧客名"
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-            />
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="time"
-              value={newReturnTime}
-              onChange={(e) => setNewReturnTime(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-            />
-            <span className="text-xs text-gray-400 self-center shrink-0">帰車時刻</span>
-            <button type="submit" className="px-4 py-2 bg-black text-white text-sm rounded-lg shrink-0">
-              追加
-            </button>
-          </div>
-        </form>
-
         <div className="flex-1 overflow-y-auto">
           {vehicles.length === 0 ? (
             <p className="text-sm text-gray-300 px-4 py-6">車両が登録されていません</p>
@@ -304,11 +273,41 @@ export default function App() {
         </div>
 
         <div className="border-t border-gray-100 shrink-0">
-          <div className="px-4 py-2 flex gap-4 text-xs">
+          <div className="px-4 pt-2 pb-1 flex gap-4 text-xs">
             <span className="text-yellow-500">● 当期未予約</span>
             <span className="text-red-500">● 前日未予約</span>
             <span className="text-gray-300">締日: 毎月15日</span>
           </div>
+          <form onSubmit={handleAdd} className="px-4 py-3 space-y-2">
+            <div className="flex gap-2">
+              <input
+                value={newPlate}
+                onChange={(e) => setNewPlate(e.target.value)}
+                placeholder="車番 *"
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+                autoCapitalize="none"
+                required
+              />
+              <input
+                value={newCustomer}
+                onChange={(e) => setNewCustomer(e.target.value)}
+                placeholder="顧客名"
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+              />
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="time"
+                value={newReturnTime}
+                onChange={(e) => setNewReturnTime(e.target.value)}
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+              />
+              <span className="text-xs text-gray-400 self-center shrink-0">帰車時刻</span>
+              <button type="submit" className="px-4 py-2 bg-black text-white text-sm rounded-lg shrink-0">
+                追加
+              </button>
+            </div>
+          </form>
           <BottomBack onBack={() => setView('main')} />
         </div>
       </div>
