@@ -188,6 +188,24 @@ export default function App() {
     setTimeout(() => setBackupMsg(''), 3000);
   }
 
+  async function handleHardReload() {
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      }
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister()));
+      }
+    } catch {
+      // ignore
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set('_', Date.now().toString());
+    window.location.replace(url.toString());
+  }
+
   // ── MAIN ───────────────────────────────────────────────────────────────────────────
   if (view === 'main') {
     return (
@@ -582,6 +600,19 @@ export default function App() {
           {backupMsg && (
             <p className="text-xs text-center text-black">{backupMsg}</p>
           )}
+
+          <div className="border-t border-gray-100 pt-6">
+            <p className="text-sm font-medium text-black mb-1">アプリを更新</p>
+            <p className="text-xs text-gray-400 mb-3">
+              新バージョンが反映されない時はこちら（キャッシュをクリアして再読込）
+            </p>
+            <button
+              onClick={handleHardReload}
+              className="w-full py-3 border border-gray-200 text-sm rounded-lg"
+            >
+              最新版に更新
+            </button>
+          </div>
 
           <div className="border-t border-gray-100 pt-6">
             <p className="text-xs text-gray-300">
