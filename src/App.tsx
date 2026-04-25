@@ -87,10 +87,11 @@ export default function App() {
   const [pullConfirm, setPullConfirm] = useState(false);
 
   const today = todayStr();
+  const [pickedDate, setPickedDate] = useState<string>(today);
   const countsByDate = useMemo(() => getCountsByDate(), [getCountsByDate]);
-  const todayCars = useMemo(
-    () => sortByReturnTime(getVehiclesForDate(today)),
-    [getVehiclesForDate, today]
+  const pickedCars = useMemo(
+    () => sortByReturnTime(getVehiclesForDate(pickedDate)),
+    [getVehiclesForDate, pickedDate]
   );
 
   const editingVehicle = useMemo(
@@ -210,6 +211,14 @@ export default function App() {
 
   // ── MAIN ───────────────────────────────────────────────────────────────────────────
   if (view === 'main') {
+    const [, pm, pd] = pickedDate.split('-');
+    const isPickedToday = pickedDate === today;
+    const dowJa = ['日', '月', '火', '水', '木', '金', '土'];
+    const pickedDow = dowJa[new Date(pickedDate + 'T00:00:00').getDay()];
+    const dateLabel = isPickedToday
+      ? `今日 ${parseInt(pm, 10)}/${parseInt(pd, 10)} (${pickedDow})`
+      : `${parseInt(pm, 10)}/${parseInt(pd, 10)} (${pickedDow})`;
+
     return (
       <div className="app-shell">
         <div className="flex-1 overflow-y-auto">
@@ -219,21 +228,33 @@ export default function App() {
               month={calMonth}
               onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
               countsByDate={countsByDate}
+              highlightedDate={pickedDate}
+              onDateSelect={setPickedDate}
             />
           </div>
 
           <div className="px-4 pt-4 pb-4 border-t border-gray-100 mt-2">
-            <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">
-              今日&nbsp;{now.getMonth() + 1}/{now.getDate()}
-              {todayCars.length > 0 && (
-                <span className="text-black font-bold ml-2">{todayCars.length}台</span>
+            <div className="flex items-baseline justify-between mb-3">
+              <p className="text-xs text-gray-400 uppercase tracking-widest">
+                {dateLabel}
+                {pickedCars.length > 0 && (
+                  <span className="text-black font-bold ml-2">{pickedCars.length}台</span>
+                )}
+              </p>
+              {!isPickedToday && (
+                <button
+                  onClick={() => setPickedDate(today)}
+                  className="text-xs text-gray-400 underline"
+                >
+                  今日へ
+                </button>
               )}
-            </p>
-            {todayCars.length === 0 ? (
+            </div>
+            {pickedCars.length === 0 ? (
               <p className="text-sm text-gray-300">予定なし</p>
             ) : (
               <ul className="space-y-3">
-                {todayCars.map((v) => {
+                {pickedCars.map((v) => {
                   const alert = getAlertLevel(v, now);
                   return (
                     <li key={v.id} className="flex items-center gap-3">
