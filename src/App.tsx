@@ -280,7 +280,7 @@ export default function App() {
             車両管理
           </button>
           <button onClick={() => setView('backup')} className="flex-1 h-12 text-sm text-gray-400">
-            バックアップ
+            設定
           </button>
         </div>
       </div>
@@ -494,7 +494,7 @@ export default function App() {
   if (view === 'backup') {
     return (
       <div className="app-shell">
-        <PageTitle title="バックアップ" />
+        <PageTitle title="設定" />
 
         <div className="flex-1 overflow-y-auto flex flex-col">
           <div className="px-4 py-6 space-y-6 mt-auto">
