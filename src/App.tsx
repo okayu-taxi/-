@@ -2,7 +2,16 @@ import { useState, useMemo, useRef } from 'react';
 import { useStore } from './store/useStore';
 import { MonthCalendar } from './components/MonthCalendar';
 import { type Vehicle, getAlertLevel, ALERT_COLORS } from './types';
+import { useGistSync, GIST_DESCRIPTION } from './lib/gistSync';
 import './index.css';
+
+function formatLastSync(iso: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 type View = 'main' | 'vehicles' | 'schedule' | 'edit' | 'backup';
 
@@ -72,6 +81,11 @@ export default function App() {
   const [backupMsg, setBackupMsg] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const sync = useGistSync(vehicles, importBackup);
+  const [patDraft, setPatDraft] = useState('');
+  const [showPat, setShowPat] = useState(false);
+  const [pullConfirm, setPullConfirm] = useState(false);
+
   const today = todayStr();
   const countsByDate = useMemo(() => getCountsByDate(), [getCountsByDate]);
   const todayCars = useMemo(
@@ -130,6 +144,50 @@ export default function App() {
       returnTime: editReturnTime || null,
     });
     setView('vehicles');
+  }
+
+  async function handleEnableSync() {
+    if (!patDraft.trim()) {
+      setBackupMsg('PAT を入力してください');
+      setTimeout(() => setBackupMsg(''), 3000);
+      return;
+    }
+    sync.setPat(patDraft);
+    setPatDraft('');
+    try {
+      const { restored } = await sync.enable();
+      setBackupMsg(restored ? '既存の Gist から復元しました' : '新しい Gist を作成しました');
+    } catch {
+      setBackupMsg('同期の開始に失敗しました');
+    }
+    setTimeout(() => setBackupMsg(''), 3000);
+  }
+
+  async function handlePullNow() {
+    setPullConfirm(false);
+    try {
+      await sync.pullNow();
+      setBackupMsg('Gist から復元しました');
+    } catch {
+      setBackupMsg('復元に失敗しました');
+    }
+    setTimeout(() => setBackupMsg(''), 3000);
+  }
+
+  async function handlePushNow() {
+    try {
+      await sync.pushNow();
+      setBackupMsg('Gist に保存しました');
+    } catch {
+      setBackupMsg('保存に失敗しました');
+    }
+    setTimeout(() => setBackupMsg(''), 3000);
+  }
+
+  function handleDisableSync() {
+    sync.disable();
+    setBackupMsg('同期を解除しました');
+    setTimeout(() => setBackupMsg(''), 3000);
   }
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
@@ -412,8 +470,131 @@ export default function App() {
       <div className="app-shell">
         <PageTitle title="バックアップ" />
 
-        <div className="flex-1 px-4 py-6 space-y-6">
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
           <div>
+            <div className="flex items-baseline justify-between mb-1">
+              <p className="text-sm font-medium text-black">GitHub Gist 自動同期</p>
+              {sync.enabled && (
+                <span
+                  className={`text-xs ${
+                    sync.status === 'syncing'
+                      ? 'text-gray-400'
+                      : sync.status === 'error'
+                      ? 'text-red-500'
+                      : 'text-black'
+                  }`}
+                >
+                  {sync.status === 'syncing'
+                    ? '同期中…'
+                    : sync.status === 'error'
+                    ? 'エラー'
+                    : '有効'}
+                </span>
+              )}
+            </div>
+
+            {!sync.enabled ? (
+              <>
+                <p className="text-xs text-gray-400 mb-3">
+                  GitHub の Personal Access Token (gist 権限のみ) を貼り付けて同期を開始すると、変更が
+                  自動で private Gist (description: 「{GIST_DESCRIPTION}」) に保存されます。別端末でも
+                  同じ PAT を貼れば自動で復元できます。
+                </p>
+                <input
+                  type={showPat ? 'text' : 'password'}
+                  value={patDraft}
+                  onChange={(e) => setPatDraft(e.target.value)}
+                  placeholder="ghp_xxxxxxxxxxxx"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black mb-2"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                <label className="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                  <input
+                    type="checkbox"
+                    checked={showPat}
+                    onChange={(e) => setShowPat(e.target.checked)}
+                  />
+                  PAT を表示
+                </label>
+                <button
+                  onClick={handleEnableSync}
+                  disabled={sync.status === 'syncing'}
+                  className="w-full py-3 bg-black text-white text-sm rounded-lg disabled:opacity-50"
+                >
+                  {sync.status === 'syncing' ? '接続中…' : '同期を開始'}
+                </button>
+                <a
+                  href="https://github.com/settings/tokens/new?scopes=gist&description=Taxi+Car+Wash"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-xs text-gray-400 underline mt-3 text-center"
+                >
+                  PAT を新規作成（gist 権限のみ）
+                </a>
+              </>
+            ) : (
+              <>
+                <p className="text-xs text-gray-400 mb-1">
+                  Gist ID: <span className="text-gray-500">{sync.gistId.slice(0, 12)}…</span>
+                </p>
+                {sync.lastSync && (
+                  <p className="text-xs text-gray-400 mb-3">
+                    最終同期: {formatLastSync(sync.lastSync)}
+                  </p>
+                )}
+                {sync.error && (
+                  <p className="text-xs text-red-500 mb-3 break-all">{sync.error}</p>
+                )}
+                <div className="flex gap-2 mb-2">
+                  <button
+                    onClick={handlePushNow}
+                    disabled={sync.status === 'syncing'}
+                    className="flex-1 py-3 border border-gray-200 text-sm rounded-lg disabled:opacity-50"
+                  >
+                    今すぐ保存
+                  </button>
+                  <button
+                    onClick={() => setPullConfirm(true)}
+                    disabled={sync.status === 'syncing'}
+                    className="flex-1 py-3 border border-gray-200 text-sm rounded-lg disabled:opacity-50"
+                  >
+                    Gist から復元
+                  </button>
+                </div>
+                {pullConfirm && (
+                  <div className="p-3 border border-gray-200 rounded-lg text-sm mb-2">
+                    <p className="text-gray-600 mb-2">
+                      現在のデータを Gist の内容で上書きします。よろしいですか？
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handlePullNow}
+                        className="px-3 py-1 bg-black text-white text-xs rounded-lg"
+                      >
+                        復元
+                      </button>
+                      <button
+                        onClick={() => setPullConfirm(false)}
+                        className="px-3 py-1 border border-gray-200 text-xs rounded-lg"
+                      >
+                        キャンセル
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <button
+                  onClick={handleDisableSync}
+                  className="w-full py-3 text-xs text-gray-400"
+                >
+                  同期を解除（PAT も削除されます）
+                </button>
+              </>
+            )}
+          </div>
+
+          <div className="border-t border-gray-100 pt-6">
             <p className="text-sm font-medium text-black mb-1">エクスポート</p>
             <p className="text-xs text-gray-400 mb-3">全データを JSON ファイルとして保存します</p>
             <button
@@ -442,10 +623,11 @@ export default function App() {
               onChange={handleImport}
               className="hidden"
             />
-            {backupMsg && (
-              <p className="text-xs text-center mt-3 text-black">{backupMsg}</p>
-            )}
           </div>
+
+          {backupMsg && (
+            <p className="text-xs text-center text-black">{backupMsg}</p>
+          )}
 
           <div className="border-t border-gray-100 pt-6">
             <p className="text-xs text-gray-300">
