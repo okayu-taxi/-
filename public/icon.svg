@@ -1,59 +1,132 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <!-- Background -->
-  <rect width="512" height="512" rx="100" fill="#e0e0e0"/>
+  <rect width="512" height="512" rx="100" fill="#f2f2f2"/>
 
-  <!-- Car body -->
-  <rect x="52" y="288" width="408" height="118" rx="20" fill="#111"/>
+  <!-- Floor tile lines -->
+  <g stroke="#cfcfcf" stroke-width="3" fill="none" opacity="0.7">
+    <line x1="0" y1="430" x2="512" y2="430"/>
+    <line x1="170" y1="430" x2="120" y2="512"/>
+    <line x1="340" y1="430" x2="400" y2="512"/>
+  </g>
 
-  <!-- Cabin -->
-  <path d="M138,288 L170,208 Q184,192 207,188 L305,188 Q328,192 342,208 L374,288Z" fill="#1c1c1c"/>
+  <!-- Wall corner line -->
+  <line x1="380" y1="0" x2="380" y2="120" stroke="#d8d8d8" stroke-width="3"/>
 
-  <!-- Window -->
-  <path d="M178,288 L203,228 Q214,213 229,210 L283,210 Q298,213 309,228 L334,288Z" fill="#4a7090" opacity="0.75"/>
-  <!-- Window divider -->
-  <rect x="252" y="210" width="8" height="78" fill="#111"/>
+  <!-- Water puddle (front) -->
+  <path d="M70,470 Q160,455 240,468 Q330,478 440,462 Q470,470 460,486 Q360,498 240,490 Q140,484 80,486 Q60,482 70,470 Z"
+        fill="#d6e2ea" opacity="0.85"/>
+  <path d="M120,492 Q200,486 280,494 Q360,498 420,490" stroke="#9fb6c2" stroke-width="3" fill="none" opacity="0.6"/>
+
+  <!-- Hose (bottom right) -->
+  <path d="M470,452 Q500,438 498,418 Q494,398 472,398 Q452,398 452,418 Q452,432 466,434"
+        stroke="#1a1a1a" stroke-width="6" fill="none"/>
+  <circle cx="466" cy="434" r="5" fill="#1a1a1a"/>
+
+  <!-- Car body (main black silhouette) -->
+  <path d="M70,402
+           L70,346
+           Q70,332 82,328
+           L120,316
+           L160,250
+           Q172,232 196,228
+           L356,228
+           Q380,232 392,250
+           L432,316
+           L450,322
+           Q462,328 462,342
+           L462,402
+           Q462,418 446,418
+           L80,418
+           Q70,418 70,402 Z"
+        fill="#0d0d0d"/>
+
+  <!-- Cabin window area (slight gray for depth) -->
+  <path d="M168,318 L196,254 Q204,242 220,240 L335,240 Q352,242 360,254 L388,318 Z"
+        fill="#1a1a1a"/>
+
+  <!-- Windows (gray with reflective highlights) -->
+  <path d="M186,310 L208,260 Q214,250 226,249 L248,249 L248,310 Z" fill="#9aa4ab"/>
+  <path d="M260,249 L330,249 Q342,250 348,260 L370,310 L260,310 Z" fill="#9aa4ab"/>
+  <!-- window pillar -->
+  <rect x="248" y="249" width="12" height="61" fill="#0d0d0d"/>
+  <!-- window highlights -->
+  <path d="M196,300 L216,260 Q220,254 226,255" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M270,260 L266,300" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M310,258 L334,300" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
 
   <!-- TAXI roof sign -->
-  <rect x="192" y="156" width="128" height="40" rx="8" fill="white"/>
-  <text x="256" y="188" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-size="27" font-weight="900" fill="#111" letter-spacing="1">TAXI</text>
+  <rect x="220" y="190" width="118" height="44" rx="4" fill="#fff" stroke="#0d0d0d" stroke-width="5"/>
+  <text x="279" y="223" text-anchor="middle"
+        font-family="Arial Black, Impact, sans-serif" font-size="28" font-weight="900"
+        fill="#0d0d0d" letter-spacing="2">TAXI</text>
 
-  <!-- Headlights -->
-  <rect x="56" y="338" width="60" height="24" rx="9" fill="#e8e8e8"/>
-  <rect x="396" y="338" width="60" height="24" rx="9" fill="#e8e8e8"/>
+  <!-- TAXI text on door -->
+  <text x="300" y="378" text-anchor="middle"
+        font-family="Arial Black, Impact, sans-serif" font-size="34" font-weight="900"
+        fill="#fff" letter-spacing="2">TAXI</text>
+
+  <!-- Headlights / grille area -->
+  <rect x="80" y="350" width="32" height="20" rx="4" fill="#f2f2f2"/>
+  <rect x="80" y="376" width="46" height="8" rx="2" fill="#f2f2f2"/>
+  <circle cx="100" cy="360" r="5" fill="#0d0d0d"/>
 
   <!-- Wheels -->
-  <circle cx="150" cy="414" r="54" fill="#0a0a0a"/>
-  <circle cx="150" cy="414" r="30" fill="#2a2a2a"/>
-  <circle cx="150" cy="414" r="12" fill="#555"/>
-  <circle cx="362" cy="414" r="54" fill="#0a0a0a"/>
-  <circle cx="362" cy="414" r="30" fill="#2a2a2a"/>
-  <circle cx="362" cy="414" r="12" fill="#555"/>
+  <circle cx="158" cy="418" r="42" fill="#0d0d0d"/>
+  <circle cx="158" cy="418" r="22" fill="#f2f2f2"/>
+  <circle cx="158" cy="418" r="10" fill="#0d0d0d"/>
+  <circle cx="392" cy="418" r="42" fill="#0d0d0d"/>
+  <circle cx="392" cy="418" r="22" fill="#f2f2f2"/>
+  <circle cx="392" cy="418" r="10" fill="#0d0d0d"/>
 
-  <!-- Foam on roof -->
-  <circle cx="218" cy="194" r="24" fill="white"/>
-  <circle cx="256" cy="188" r="20" fill="white"/>
-  <circle cx="294" cy="193" r="22" fill="white"/>
-  <circle cx="238" cy="173" r="15" fill="white"/>
-  <circle cx="272" cy="170" r="13" fill="white"/>
+  <!-- Sponge on hood -->
+  <ellipse cx="120" cy="298" rx="48" ry="18" fill="#bdbdbd" stroke="#0d0d0d" stroke-width="4"/>
+  <ellipse cx="120" cy="290" rx="48" ry="14" fill="#d8d8d8" stroke="#0d0d0d" stroke-width="4"/>
 
-  <!-- Right bubbles -->
-  <circle cx="434" cy="236" r="30" fill="white"/>
-  <circle cx="465" cy="194" r="19" fill="white"/>
-  <circle cx="420" cy="192" r="16" fill="white"/>
-  <circle cx="450" cy="164" r="12" fill="white"/>
+  <!-- Spray nozzle -->
+  <path d="M240,300 L268,288 L274,296 L246,310 Z" fill="#0d0d0d"/>
+  <rect x="266" y="286" width="14" height="6" fill="#0d0d0d"/>
 
-  <!-- Left bubbles -->
-  <circle cx="72" cy="246" r="26" fill="white"/>
-  <circle cx="46" cy="208" r="17" fill="white"/>
-  <circle cx="84" cy="204" r="14" fill="white"/>
-  <circle cx="52" cy="178" r="10" fill="white"/>
+  <!-- Foam piles on roof -->
+  <g fill="#fff" stroke="#0d0d0d" stroke-width="4">
+    <circle cx="180" cy="220" r="22"/>
+    <circle cx="208" cy="200" r="20"/>
+    <circle cx="232" cy="184" r="16"/>
+    <circle cx="350" cy="200" r="22"/>
+    <circle cx="378" cy="218" r="18"/>
+    <circle cx="328" cy="186" r="14"/>
+  </g>
+  <!-- Foam on side -->
+  <g fill="#fff" stroke="#0d0d0d" stroke-width="4">
+    <circle cx="135" cy="346" r="16"/>
+    <circle cx="158" cy="332" r="12"/>
+    <circle cx="220" cy="348" r="14"/>
+    <circle cx="380" cy="350" r="18"/>
+    <circle cx="408" cy="338" r="13"/>
+    <circle cx="430" cy="360" r="12"/>
+  </g>
+
+  <!-- Floating bubbles -->
+  <g fill="none" stroke="#0d0d0d" stroke-width="3">
+    <circle cx="92" cy="170" r="10"/>
+    <circle cx="58" cy="220" r="7"/>
+    <circle cx="262" cy="120" r="9"/>
+    <circle cx="430" cy="150" r="11"/>
+    <circle cx="468" cy="200" r="7"/>
+    <circle cx="148" cy="92" r="8"/>
+  </g>
 
   <!-- Water drops on car -->
-  <ellipse cx="310" cy="258" rx="5" ry="10" fill="#7aaccc" opacity="0.6"/>
-  <ellipse cx="280" cy="268" rx="4" ry="9" fill="#7aaccc" opacity="0.5"/>
-  <ellipse cx="186" cy="255" rx="5" ry="10" fill="#7aaccc" opacity="0.6"/>
-  <ellipse cx="218" cy="265" rx="4" ry="8" fill="#7aaccc" opacity="0.5"/>
+  <g fill="#fff">
+    <ellipse cx="298" cy="330" rx="3" ry="8"/>
+    <ellipse cx="318" cy="340" rx="3" ry="7"/>
+    <ellipse cx="338" cy="328" rx="3" ry="9"/>
+    <ellipse cx="358" cy="344" rx="3" ry="7"/>
+    <ellipse cx="195" cy="332" rx="3" ry="8"/>
+    <ellipse cx="215" cy="346" rx="3" ry="7"/>
+  </g>
 
-  <!-- Water puddle -->
-  <ellipse cx="256" cy="478" rx="190" ry="18" fill="#b0c8d8" opacity="0.5"/>
+  <!-- Sparkle -->
+  <g fill="#0d0d0d">
+    <path d="M448,470 l3,-10 l3,10 l10,3 l-10,3 l-3,10 l-3,-10 l-10,-3 z"/>
+  </g>
 </svg>
