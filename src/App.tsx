@@ -32,8 +32,10 @@ function sortByReturnTime(vehicles: Vehicle[]): Vehicle[] {
 // ── shared nav ──────────────────────────────────────────────────────────────────────────────
 function PageTitle({ title }: { title: string }) {
   return (
-    <div className="flex items-center justify-center h-12 px-4 border-b border-gray-100 pt-safe shrink-0">
-      <span className="text-sm font-medium">{title}</span>
+    <div className="border-b border-gray-100 pt-safe shrink-0">
+      <div className="flex items-center justify-center h-12 px-4">
+        <span className="text-sm font-medium">{title}</span>
+      </div>
     </div>
   );
 }
