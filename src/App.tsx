@@ -505,19 +505,6 @@ export default function App() {
             </div>
 
             <div className="border-t border-gray-100 pt-6">
-              <p className="text-sm font-medium text-black mb-1">アプリを更新</p>
-              <p className="text-xs text-gray-400 mb-3">
-                新バージョンが反映されない時はこちら（キャッシュをクリアして再読込）
-              </p>
-              <button
-                onClick={handleHardReload}
-                className="w-full py-3 border border-gray-200 text-sm rounded-lg"
-              >
-                最新版に更新
-              </button>
-            </div>
-
-            <div className="border-t border-gray-100 pt-6">
               <div className="flex items-baseline justify-between mb-1">
                 <p className="text-sm font-medium text-black">GitHub Gist 自動同期</p>
                 {sync.enabled && (
@@ -638,6 +625,19 @@ export default function App() {
                   </button>
                 </>
               )}
+            </div>
+
+            <div className="border-t border-gray-100 pt-6">
+              <p className="text-sm font-medium text-black mb-1">アプリを更新</p>
+              <p className="text-xs text-gray-400 mb-3">
+                新バージョンが反映されない時はこちら（キャッシュをクリアして再読込）
+              </p>
+              <button
+                onClick={handleHardReload}
+                className="w-full py-3 border border-gray-200 text-sm rounded-lg"
+              >
+                最新版に更新
+              </button>
             </div>
 
             {backupMsg && (
