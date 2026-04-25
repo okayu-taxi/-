@@ -383,6 +383,9 @@ export default function App() {
             selectedDates={editingVehicle.washDates}
             onDateToggle={(date) => toggleWashDate(editingVehicle.id, date)}
           />
+          <p className="text-sm font-medium text-center mb-1">
+            合計 {editingVehicle.washDates.length} 日
+          </p>
           <p className="text-xs text-gray-300 text-center mb-4">
             日付をタップして洗車日を設定 / 解除
           </p>
