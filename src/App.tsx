@@ -477,8 +477,7 @@ export default function App() {
           <div className="px-4 py-6 space-y-6 mt-auto">
             <div>
               <p className="text-xs text-gray-300">
-                登録車両数: {vehicles.length}台 ／ 合計洗車日数:{' '}
-                {vehicles.reduce((sum, v) => sum + v.washDates.length, 0)}日
+                登録車両数: {vehicles.length}台
               </p>
             </div>
 
