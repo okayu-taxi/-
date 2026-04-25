@@ -270,11 +270,11 @@ export default function App() {
       <div className="app-shell">
         <PageTitle title="車両管理" />
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto flex flex-col">
           {vehicles.length === 0 ? (
-            <p className="text-sm text-gray-300 px-4 py-6">車両が登録されていません</p>
+            <p className="text-sm text-gray-300 px-4 py-6 mt-auto">車両が登録されていません</p>
           ) : (
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-gray-100 mt-auto">
               {sortedVehicles.map((v) => {
                 const alert = getAlertLevel(v, now);
                 return (
