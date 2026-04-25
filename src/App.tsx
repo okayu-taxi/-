@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from './store/useStore';
 import { MonthCalendar } from './components/MonthCalendar';
 import { type Vehicle, getAlertLevel, ALERT_COLORS } from './types';
@@ -57,7 +57,6 @@ export default function App() {
     toggleWashDate,
     getCountsByDate,
     getVehiclesForDate,
-    exportBackup,
     importBackup,
   } = useStore();
 
@@ -79,7 +78,6 @@ export default function App() {
 
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [backupMsg, setBackupMsg] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sync = useGistSync(vehicles, importBackup);
   const [patDraft, setPatDraft] = useState('');
@@ -188,19 +186,6 @@ export default function App() {
     sync.disable();
     setBackupMsg('同期を解除しました');
     setTimeout(() => setBackupMsg(''), 3000);
-  }
-
-  function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const ok = importBackup(ev.target?.result as string);
-      setBackupMsg(ok ? '復元しました' : 'ファイルが不正です');
-      setTimeout(() => setBackupMsg(''), 3000);
-    };
-    reader.readAsText(file);
-    e.target.value = '';
   }
 
   // ── MAIN ───────────────────────────────────────────────────────────────────────────
@@ -592,37 +577,6 @@ export default function App() {
                 </button>
               </>
             )}
-          </div>
-
-          <div className="border-t border-gray-100 pt-6">
-            <p className="text-sm font-medium text-black mb-1">エクスポート</p>
-            <p className="text-xs text-gray-400 mb-3">全データを JSON ファイルとして保存します</p>
-            <button
-              onClick={exportBackup}
-              className="w-full py-3 border border-gray-200 text-sm rounded-lg"
-            >
-              バックアップをダウンロード
-            </button>
-          </div>
-
-          <div className="border-t border-gray-100 pt-6">
-            <p className="text-sm font-medium text-black mb-1">インポート</p>
-            <p className="text-xs text-gray-400 mb-3">
-              バックアップファイルからデータを復元します（現在のデータは上書きされます）
-            </p>
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full py-3 border border-gray-200 text-sm rounded-lg"
-            >
-              ファイルから復元
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleImport}
-              className="hidden"
-            />
           </div>
 
           {backupMsg && (
