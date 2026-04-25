@@ -49,9 +49,22 @@ interface Props {
   countsByDate?: Record<string, number>;
   selectedDates?: string[];
   onDateToggle?: (date: string) => void;
+  /** Date to visually highlight (view-only selection, not a wash mark). */
+  highlightedDate?: string;
+  /** Tap a date to select it without toggling a wash. */
+  onDateSelect?: (date: string) => void;
 }
 
-export function MonthCalendar({ year, month, onMonthChange, countsByDate, selectedDates, onDateToggle }: Props) {
+export function MonthCalendar({
+  year,
+  month,
+  onMonthChange,
+  countsByDate,
+  selectedDates,
+  onDateToggle,
+  highlightedDate,
+  onDateSelect,
+}: Props) {
   const cells = useMemo(() => buildGrid(year, month), [year, month]);
   const selectedSet = useMemo(() => new Set(selectedDates ?? []), [selectedDates]);
 
@@ -59,6 +72,7 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
   const todayStr = toDateStr(now.getFullYear(), now.getMonth(), now.getDate());
 
   const isEditMode = !!onDateToggle;
+  const tappable = isEditMode || !!onDateSelect;
 
   const [py, pm] = prevYM(year, month);
   const [ny, nm] = nextYM(year, month);
@@ -105,6 +119,7 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
           const dateStr = toDateStr(year, month, day);
           const isToday = dateStr === todayStr;
           const isSelected = selectedSet.has(dateStr);
+          const isHighlighted = highlightedDate === dateStr;
           const count = countsByDate?.[dateStr];
           const hasMark = isEditMode ? isSelected : (count ?? 0) > 0;
 
@@ -124,6 +139,13 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
             circleCls = 'bg-gray-200 border-2 border-black font-bold';
           }
 
+          // View-only highlight: outline ring around the day circle.
+          if (isHighlighted && !isEditMode && !isToday) {
+            circleCls += ' ring-2 ring-offset-1 ring-black';
+          } else if (isHighlighted && !isEditMode && isToday && !hasMark) {
+            circleCls += ' ring-2 ring-offset-1 ring-black';
+          }
+
           // Day number color (only when not selected)
           const numColor = hasMark
             ? ''
@@ -134,10 +156,13 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
           return (
             <button
               key={idx}
-              disabled={!isEditMode}
-              onClick={() => onDateToggle?.(dateStr)}
+              disabled={!tappable}
+              onClick={() => {
+                if (isEditMode) onDateToggle?.(dateStr);
+                else onDateSelect?.(dateStr);
+              }}
               className={`flex flex-col items-center py-1.5 gap-0.5 min-h-[2.75rem] ${
-                isEditMode ? 'active:opacity-60' : 'cursor-default'
+                tappable ? 'active:opacity-60' : 'cursor-default'
               }`}
             >
               <span
