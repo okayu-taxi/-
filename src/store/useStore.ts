@@ -92,17 +92,6 @@ export function useStore() {
     [vehicles]
   );
 
-  const exportBackup = useCallback(() => {
-    const data = JSON.stringify({ version: 2, vehicles }, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `wash-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [vehicles]);
-
   const importBackup = useCallback((json: string): boolean => {
     try {
       const data = JSON.parse(json) as { version?: number; vehicles?: unknown[] };
@@ -122,7 +111,6 @@ export function useStore() {
     toggleWashDate,
     getCountsByDate,
     getVehiclesForDate,
-    exportBackup,
     importBackup,
   };
 }
