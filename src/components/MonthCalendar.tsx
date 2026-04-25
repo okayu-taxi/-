@@ -2,12 +2,30 @@ import { useMemo } from 'react';
 
 const DOW = ['日', '月', '火', '水', '木', '金', '土'];
 
+const HOLIDAYS = new Set([
+  // 2025
+  '2025-01-01','2025-01-13','2025-02-11','2025-02-23','2025-02-24',
+  '2025-03-20','2025-04-29','2025-05-03','2025-05-04','2025-05-05','2025-05-06',
+  '2025-07-21','2025-08-11','2025-09-15','2025-09-23',
+  '2025-10-13','2025-11-03','2025-11-23','2025-11-24',
+  // 2026
+  '2026-01-01','2026-01-12','2026-02-11','2026-02-23',
+  '2026-03-20','2026-04-29','2026-05-03','2026-05-04','2026-05-05','2026-05-06',
+  '2026-07-20','2026-08-11','2026-09-21','2026-09-22','2026-09-23',
+  '2026-10-12','2026-11-03','2026-11-23',
+  // 2027
+  '2027-01-01','2027-01-11','2027-02-11','2027-02-23',
+  '2027-03-21','2027-04-29','2027-05-03','2027-05-04','2027-05-05',
+  '2027-07-19','2027-08-11','2027-09-20','2027-09-23',
+  '2027-10-11','2027-11-03','2027-11-23',
+]);
+
 function toDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 function buildGrid(year: number, month: number): (number | null)[] {
-  const firstDow = new Date(year, month, 1).getDay(); // 0=Sun … 6=Sat
+  const firstDow = new Date(year, month, 1).getDay();
   const lastDay = new Date(year, month + 1, 0).getDate();
   const cells: (number | null)[] = [
     ...Array<null>(firstDow).fill(null),
@@ -28,9 +46,7 @@ interface Props {
   year: number;
   month: number;
   onMonthChange: (year: number, month: number) => void;
-  /** view mode: show count badges */
   countsByDate?: Record<string, number>;
-  /** edit mode: show selected state + allow toggle */
   selectedDates?: string[];
   onDateToggle?: (date: string) => void;
 }
@@ -49,7 +65,6 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
 
   return (
     <div className="select-none">
-      {/* Month header */}
       <div className="flex items-center justify-between py-3">
         <button
           onClick={() => onMonthChange(py, pm)}
@@ -70,19 +85,19 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
         </button>
       </div>
 
-      {/* Day of week headers */}
       <div className="grid grid-cols-7 mb-1">
         {DOW.map((d, i) => (
           <div
             key={d}
-            className={`text-center text-xs py-1 ${i === 0 || i === 6 ? 'text-gray-300' : 'text-gray-400'}`}
+            className={`text-center text-xs py-1 font-medium ${
+              i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'
+            }`}
           >
             {d}
           </div>
         ))}
       </div>
 
-      {/* Day cells */}
       <div className="grid grid-cols-7">
         {cells.map((day, idx) => {
           if (!day) return <div key={idx} />;
@@ -92,6 +107,29 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
           const isSelected = selectedSet.has(dateStr);
           const count = countsByDate?.[dateStr];
           const hasMark = isEditMode ? isSelected : (count ?? 0) > 0;
+
+          const col = idx % 7; // 0=Sun, 6=Sat
+          const isSunday = col === 0;
+          const isSaturday = col === 6;
+          const isHoliday = HOLIDAYS.has(dateStr);
+          const isRedDay = isSunday || isHoliday;
+
+          // Circle background + ring
+          let circleCls = '';
+          if (hasMark && isToday) {
+            circleCls = 'bg-black text-white ring-2 ring-offset-1 ring-gray-400';
+          } else if (hasMark) {
+            circleCls = 'bg-black text-white';
+          } else if (isToday) {
+            circleCls = 'bg-gray-200 border-2 border-black font-bold';
+          }
+
+          // Day number color (only when not selected)
+          const numColor = hasMark
+            ? ''
+            : isRedDay ? 'text-red-500'
+            : isSaturday ? 'text-blue-500'
+            : 'text-black';
 
           return (
             <button
@@ -103,21 +141,13 @@ export function MonthCalendar({ year, month, onMonthChange, countsByDate, select
               }`}
             >
               <span
-                className={`w-8 h-8 flex items-center justify-center text-sm rounded-full transition-colors ${
-                  hasMark
-                    ? 'bg-black text-white'
-                    : 'text-black'
-                }`}
+                className={`w-8 h-8 flex items-center justify-center text-sm rounded-full transition-colors ${circleCls} ${numColor}`}
               >
                 {day}
               </span>
-              {/* today dot indicator — always visible regardless of selection */}
-              {isToday
-                ? <span className={`w-1.5 h-1.5 rounded-full ${hasMark ? 'bg-white' : 'bg-black'}`} />
-                : !isEditMode && count !== undefined && count > 0
-                ? <span className="text-[10px] font-bold text-black leading-none">{count}</span>
-                : null
-              }
+              {!isEditMode && count !== undefined && count > 0 && (
+                <span className="text-[10px] font-bold text-black leading-none">{count}</span>
+              )}
             </button>
           );
         })}
