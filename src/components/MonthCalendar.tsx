@@ -81,26 +81,40 @@ export function MonthCalendar({
   useLayoutEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollLeft = el.clientWidth;
+    if (el.scrollLeft !== el.clientWidth) {
+      el.scrollLeft = el.clientWidth;
+    }
   }, [year, month]);
 
-  // Detect when a swipe settles on prev/next page and update the month.
+  // Detect when a swipe truly settles on prev/next page and update the month.
+  // Use scrollend (iOS 16+/Chrome 114+) when available — it fires only after
+  // the user's touch ends AND scroll-snap has fully settled, which avoids the
+  // jank you get from interrupting the user with a scrollLeft reset mid-swipe.
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+
+    const settle = () => {
+      const w = el.clientWidth;
+      if (w === 0) return;
+      const ratio = el.scrollLeft / w;
+      if (ratio < 0.5) {
+        onMonthChange(py, pm);
+      } else if (ratio > 1.5) {
+        onMonthChange(ny, nm);
+      }
+    };
+
+    if ('onscrollend' in window) {
+      el.addEventListener('scrollend' as 'scroll', settle, { passive: true });
+      return () => el.removeEventListener('scrollend' as 'scroll', settle);
+    }
+
+    // Fallback for older browsers: debounce, leaning long so snap finishes.
     let timer: number | null = null;
     const onScroll = () => {
       if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        const w = el.clientWidth;
-        if (w === 0) return;
-        const ratio = el.scrollLeft / w;
-        if (ratio < 0.5) {
-          onMonthChange(py, pm);
-        } else if (ratio > 1.5) {
-          onMonthChange(ny, nm);
-        }
-      }, 120);
+      timer = window.setTimeout(settle, 200);
     };
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => {
