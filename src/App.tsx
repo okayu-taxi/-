@@ -99,13 +99,10 @@ export default function App() {
     [vehicles, editingId]
   );
 
-  // sorted vehicle list: red → yellow → none
+  // sorted by ascending wash-day count (cars with fewer scheduled washes first)
   const sortedVehicles = useMemo(() => {
-    const order: Record<string, number> = { red: 0, yellow: 1, none: 2 };
-    return [...vehicles].sort(
-      (a, b) => order[getAlertLevel(a, now)] - order[getAlertLevel(b, now)]
-    );
-  }, [vehicles, now]);
+    return [...vehicles].sort((a, b) => a.washDates.length - b.washDates.length);
+  }, [vehicles]);
 
   function openSchedule(vehicle: Vehicle) {
     setEditingId(vehicle.id);
