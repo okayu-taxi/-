@@ -250,19 +250,19 @@ export default function App() {
             {pickedCars.length === 0 ? (
               <p className="text-sm text-gray-300">予定なし</p>
             ) : (
-              <ul className="space-y-3">
+              <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
                 {pickedCars.map((v) => {
                   const alert = getAlertLevel(v, now);
                   return (
-                    <li key={v.id} className="flex items-center gap-3">
+                    <li key={v.id} className="flex items-baseline gap-1.5">
                       {v.returnTime && (
-                        <span className="text-xs text-gray-400 w-10 shrink-0">{v.returnTime}</span>
+                        <span className="text-[11px] text-gray-400">{v.returnTime}</span>
                       )}
                       <span className={`text-sm font-medium ${ALERT_COLORS[alert]}`}>
                         {v.plateNumber}
                       </span>
                       {v.customerName && (
-                        <span className="text-xs text-gray-400">{v.customerName}</span>
+                        <span className="text-[11px] text-gray-400">{v.customerName}</span>
                       )}
                     </li>
                   );
