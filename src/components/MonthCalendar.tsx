@@ -163,7 +163,7 @@ export function MonthCalendar({
               }`}
             >
               <span
-                className={`w-8 h-8 flex items-center justify-center text-sm rounded-full transition-colors ${circleCls} ${numColor}`}
+                className={`w-8 h-8 flex items-center justify-center text-sm rounded-full ${circleCls} ${numColor}`}
               >
                 {day}
               </span>
