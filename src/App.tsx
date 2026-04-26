@@ -93,6 +93,22 @@ export default function App() {
     () => sortByReturnTime(getVehiclesForDate(pickedDate)),
     [getVehiclesForDate, pickedDate]
   );
+  const pickedCarsByTime = useMemo(() => {
+    const map = new Map<string, Vehicle[]>();
+    for (const v of pickedCars) {
+      const key = v.returnTime ?? '';
+      const arr = map.get(key);
+      if (arr) arr.push(v);
+      else map.set(key, [v]);
+    }
+    const keys = Array.from(map.keys()).sort((a, b) => {
+      if (!a && !b) return 0;
+      if (!a) return 1;
+      if (!b) return -1;
+      return a.localeCompare(b);
+    });
+    return keys.map((time) => ({ time, cars: map.get(time)! }));
+  }, [pickedCars]);
 
   const editingVehicle = useMemo(
     () => vehicles.find((v) => v.id === editingId) ?? null,
@@ -250,24 +266,30 @@ export default function App() {
             {pickedCars.length === 0 ? (
               <p className="text-sm text-gray-300">予定なし</p>
             ) : (
-              <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
-                {pickedCars.map((v) => {
-                  const alert = getAlertLevel(v, now);
-                  return (
-                    <li key={v.id} className="flex items-baseline gap-1.5">
-                      {v.returnTime && (
-                        <span className="text-[11px] text-gray-400">{v.returnTime}</span>
-                      )}
-                      <span className={`text-sm font-medium ${ALERT_COLORS[alert]}`}>
-                        {v.plateNumber}
-                      </span>
-                      {v.customerName && (
-                        <span className="text-[11px] text-gray-400">{v.customerName}</span>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
+              <div className="space-y-2">
+                {pickedCarsByTime.map(({ time, cars }) => (
+                  <div key={time || 'no-time'} className="flex items-baseline gap-3">
+                    <span className="text-[11px] text-gray-400 w-10 shrink-0">
+                      {time || '時刻なし'}
+                    </span>
+                    <ul className="flex flex-wrap gap-x-3 gap-y-1">
+                      {cars.map((v) => {
+                        const alert = getAlertLevel(v, now);
+                        return (
+                          <li key={v.id} className="flex items-baseline gap-1">
+                            <span className={`text-sm font-medium ${ALERT_COLORS[alert]}`}>
+                              {v.plateNumber}
+                            </span>
+                            {v.customerName && (
+                              <span className="text-[11px] text-gray-400">{v.customerName}</span>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
