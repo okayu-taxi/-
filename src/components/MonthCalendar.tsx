@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 const DOW = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -65,7 +65,7 @@ export function MonthCalendar({
   highlightedDate,
   onDateSelect,
 }: Props) {
-  const cells = useMemo(() => buildGrid(year, month), [year, month]);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const selectedSet = useMemo(() => new Set(selectedDates ?? []), [selectedDates]);
 
   const now = new Date();
@@ -77,46 +77,46 @@ export function MonthCalendar({
   const [py, pm] = prevYM(year, month);
   const [ny, nm] = nextYM(year, month);
 
-  return (
-    <div className="select-none">
-      <div className="flex items-center justify-between py-3">
-        <button
-          onClick={() => onMonthChange(py, pm)}
-          className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
-          aria-label="前月"
-        >
-          ‹
-        </button>
-        <span className="text-sm font-medium tracking-wide">
-          {year}年{month + 1}月
-        </span>
-        <button
-          onClick={() => onMonthChange(ny, nm)}
-          className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
-          aria-label="経月"
-        >
-          ›
-        </button>
-      </div>
+  // Re-center on the middle (current) page after every month change.
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollLeft = el.clientWidth;
+  }, [year, month]);
 
-      <div className="grid grid-cols-7 mb-1">
-        {DOW.map((d, i) => (
-          <div
-            key={d}
-            className={`text-center text-xs py-1 font-medium ${
-              i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'
-            }`}
-          >
-            {d}
-          </div>
-        ))}
-      </div>
+  // Detect when a swipe settles on prev/next page and update the month.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let timer: number | null = null;
+    const onScroll = () => {
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const w = el.clientWidth;
+        if (w === 0) return;
+        const ratio = el.scrollLeft / w;
+        if (ratio < 0.5) {
+          onMonthChange(py, pm);
+        } else if (ratio > 1.5) {
+          onMonthChange(ny, nm);
+        }
+      }, 120);
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [py, pm, ny, nm, onMonthChange]);
 
-      <div className="grid grid-cols-7">
+  function renderGrid(y: number, m: number) {
+    const cells = buildGrid(y, m);
+    return (
+      <div className="grid grid-cols-7 w-full">
         {cells.map((day, idx) => {
           if (!day) return <div key={idx} />;
 
-          const dateStr = toDateStr(year, month, day);
+          const dateStr = toDateStr(y, m, day);
           const isToday = dateStr === todayStr;
           const isSelected = selectedSet.has(dateStr);
           const isHighlighted = highlightedDate === dateStr;
@@ -129,7 +129,6 @@ export function MonthCalendar({
           const isHoliday = HOLIDAYS.has(dateStr);
           const isRedDay = isSunday || isHoliday;
 
-          // Circle background + ring
           let circleCls = '';
           if (hasMark && isToday) {
             circleCls = 'bg-black text-white ring-2 ring-offset-1 ring-gray-400';
@@ -139,14 +138,12 @@ export function MonthCalendar({
             circleCls = 'bg-gray-200 border-2 border-black font-bold';
           }
 
-          // View-only highlight: outline ring around the day circle.
           if (isHighlighted && !isEditMode && !isToday) {
             circleCls += ' ring-2 ring-offset-1 ring-black';
           } else if (isHighlighted && !isEditMode && isToday && !hasMark) {
             circleCls += ' ring-2 ring-offset-1 ring-black';
           }
 
-          // Day number color (only when not selected)
           const numColor = hasMark
             ? ''
             : isRedDay ? 'text-red-500'
@@ -176,6 +173,58 @@ export function MonthCalendar({
             </button>
           );
         })}
+      </div>
+    );
+  }
+
+  return (
+    <div className="select-none">
+      <div className="flex items-center justify-between py-3">
+        <button
+          onClick={() => onMonthChange(py, pm)}
+          className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
+          aria-label="前月"
+        >
+          ‹
+        </button>
+        <span className="text-sm font-medium tracking-wide">
+          {year}年{month + 1}月
+        </span>
+        <button
+          onClick={() => onMonthChange(ny, nm)}
+          className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
+          aria-label="翌月"
+        >
+          ›
+        </button>
+      </div>
+
+      <div className="grid grid-cols-7 mb-1">
+        {DOW.map((d, i) => (
+          <div
+            key={d}
+            className={`text-center text-xs py-1 font-medium ${
+              i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'
+            }`}
+          >
+            {d}
+          </div>
+        ))}
+      </div>
+
+      <div
+        ref={scrollRef}
+        className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none overscroll-x-contain"
+      >
+        <div className="snap-center shrink-0 w-full">
+          {renderGrid(py, pm)}
+        </div>
+        <div className="snap-center shrink-0 w-full">
+          {renderGrid(year, month)}
+        </div>
+        <div className="snap-center shrink-0 w-full">
+          {renderGrid(ny, nm)}
+        </div>
       </div>
     </div>
   );
