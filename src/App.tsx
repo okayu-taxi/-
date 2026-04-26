@@ -243,6 +243,11 @@ export default function App() {
               countsByDate={countsByDate}
               highlightedDate={pickedDate}
               onDateSelect={setPickedDate}
+              onTodayClick={() => {
+                setCalYear(now.getFullYear());
+                setCalMonth(now.getMonth());
+                setPickedDate(today);
+              }}
             />
           </div>
 
@@ -485,6 +490,10 @@ export default function App() {
             onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
             selectedDates={editingVehicle.washDates}
             onDateToggle={(date) => toggleWashDate(editingVehicle.id, date)}
+            onTodayClick={() => {
+              setCalYear(now.getFullYear());
+              setCalMonth(now.getMonth());
+            }}
           />
           <p className="text-sm font-medium text-center mb-1">
             合計 {editingVehicle.washDates.length} 日

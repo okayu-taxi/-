@@ -53,6 +53,8 @@ interface Props {
   highlightedDate?: string;
   /** Tap a date to select it without toggling a wash. */
   onDateSelect?: (date: string) => void;
+  /** Tap the year/month header to jump back to today. */
+  onTodayClick?: () => void;
 }
 
 export function MonthCalendar({
@@ -64,6 +66,7 @@ export function MonthCalendar({
   onDateToggle,
   highlightedDate,
   onDateSelect,
+  onTodayClick,
 }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const selectedSet = useMemo(() => new Set(selectedDates ?? []), [selectedDates]);
@@ -201,9 +204,18 @@ export function MonthCalendar({
         >
           ‹
         </button>
-        <span className="text-sm font-medium tracking-wide">
-          {year}年{month + 1}月
-        </span>
+        {onTodayClick ? (
+          <button
+            onClick={onTodayClick}
+            className="text-sm font-medium tracking-wide px-3 py-2 -my-2 active:opacity-60"
+          >
+            {year}年{month + 1}月
+          </button>
+        ) : (
+          <span className="text-sm font-medium tracking-wide">
+            {year}年{month + 1}月
+          </span>
+        )}
         <button
           onClick={() => onMonthChange(ny, nm)}
           className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
