@@ -147,21 +147,35 @@ export function MonthCalendar({
           const isRedDay = isSunday || isHoliday;
 
           let circleCls = '';
-          if (hasMark && isToday) {
-            circleCls = 'bg-black text-white ring-2 ring-offset-1 ring-gray-400';
-          } else if (hasMark) {
-            circleCls = 'bg-black text-white';
-          } else if (isToday) {
-            circleCls = 'bg-gray-200 border-2 border-black font-bold';
+          let isFilled = false;
+          if (isEditMode) {
+            // Edit mode keeps the fill-when-selected scheme.
+            if (hasMark && isToday) {
+              circleCls = 'bg-black text-white ring-2 ring-offset-1 ring-gray-400';
+              isFilled = true;
+            } else if (hasMark) {
+              circleCls = 'bg-black text-white';
+              isFilled = true;
+            } else if (isToday) {
+              circleCls = 'bg-black text-white';
+              isFilled = true;
+            }
+          } else {
+            // Apple-Calendar style: today is the only filled circle; wash count
+            // below the circle is the per-day indicator.
+            if (isToday) {
+              circleCls = 'bg-black text-white';
+              isFilled = true;
+            }
           }
 
           if (isHighlighted && !isEditMode && !isToday) {
             circleCls += ' ring-2 ring-offset-1 ring-black';
-          } else if (isHighlighted && !isEditMode && isToday && !hasMark) {
-            circleCls += ' ring-2 ring-offset-1 ring-black';
+          } else if (isHighlighted && !isEditMode && isToday) {
+            circleCls += ' ring-2 ring-offset-1 ring-gray-400';
           }
 
-          const numColor = hasMark
+          const numColor = isFilled
             ? ''
             : isRedDay ? 'text-red-500'
             : isSaturday ? 'text-blue-500'
