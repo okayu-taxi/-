@@ -171,8 +171,6 @@ export function MonthCalendar({
 
           if (isHighlighted && !isEditMode && !isToday) {
             circleCls += ' ring-2 ring-offset-1 ring-black';
-          } else if (isHighlighted && !isEditMode && isToday) {
-            circleCls += ' ring-2 ring-offset-1 ring-gray-400';
           }
 
           const numColor = isFilled
