@@ -655,16 +655,16 @@ export default function App() {
               )}
             </div>
 
-            <div className="border-t border-gray-100 pt-6">
-              <p className="text-sm font-medium text-black mb-1">アプリを更新</p>
-              <p className="text-xs text-gray-400 mb-3">
-                新バージョンが反映されない時はこちら（キャッシュをクリアして再読込）
+            <div className="border border-gray-200 rounded-2xl p-5">
+              <p className="text-xs text-gray-400 mb-2">再読み込み</p>
+              <p className="text-sm text-gray-700 mb-4">
+                動作がおかしい時・データが反映されない時に押してください。
               </p>
               <button
                 onClick={handleHardReload}
-                className="w-full py-3 border border-gray-200 text-sm rounded-lg"
+                className="w-full py-4 bg-black text-white text-base font-medium rounded-xl"
               >
-                最新版に更新
+                再読み込みする
               </button>
             </div>
 
