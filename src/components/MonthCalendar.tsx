@@ -199,7 +199,9 @@ export function MonthCalendar({
                 {day}
               </span>
               {!isEditMode && count !== undefined && count > 0 && (
-                <span className="text-[10px] font-bold text-black leading-none">{count}</span>
+                <span className="text-[10px] font-bold text-white bg-black px-1.5 rounded-full leading-tight">
+                  {count}
+                </span>
               )}
             </button>
           );
