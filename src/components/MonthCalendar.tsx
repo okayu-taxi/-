@@ -138,7 +138,6 @@ export function MonthCalendar({
           const isSelected = selectedSet.has(dateStr);
           const isHighlighted = highlightedDate === dateStr;
           const count = countsByDate?.[dateStr];
-          const hasMark = isEditMode ? isSelected : (count ?? 0) > 0;
 
           const col = idx % 7; // 0=Sun, 6=Sat
           const isSunday = col === 0;
@@ -148,26 +147,13 @@ export function MonthCalendar({
 
           let circleCls = '';
           let isFilled = false;
-          if (isEditMode) {
-            // Edit mode keeps the fill-when-selected scheme.
-            if (hasMark && isToday) {
-              circleCls = 'bg-black text-white ring-2 ring-offset-1 ring-gray-400';
-              isFilled = true;
-            } else if (hasMark) {
-              circleCls = 'bg-black text-white';
-              isFilled = true;
-            } else if (isToday) {
-              circleCls = 'bg-black text-white';
-              isFilled = true;
-            }
-          } else {
-            // Apple-Calendar style: today is the only filled circle; wash count
-            // below the circle is the per-day indicator.
-            if (isToday) {
-              circleCls = 'bg-black text-white';
-              isFilled = true;
-            }
+          if (isToday) {
+            // Today is always the filled circle (Apple-Calendar style).
+            circleCls = 'bg-black text-white';
+            isFilled = true;
           }
+          // In edit mode, selection is shown as "出番" pill below the day so it
+          // can't be confused with today's filled circle.
 
           if (isHighlighted && !isEditMode && !isToday) {
             circleCls += ' ring-2 ring-offset-1 ring-black';
@@ -199,6 +185,11 @@ export function MonthCalendar({
               {!isEditMode && count !== undefined && count > 0 && (
                 <span className="text-[10px] font-bold text-white bg-black px-1.5 rounded-full leading-tight">
                   {count}
+                </span>
+              )}
+              {isEditMode && isSelected && (
+                <span className="text-[10px] font-bold text-white bg-black px-1.5 rounded-full leading-tight">
+                  出番
                 </span>
               )}
             </button>
