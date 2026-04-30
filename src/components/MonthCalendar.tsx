@@ -188,7 +188,7 @@ export function MonthCalendar({
                 </span>
               )}
               {isEditMode && isSelected && (
-                <span className="text-[10px] font-bold text-white bg-black px-1.5 rounded-full leading-tight">
+                <span className="text-[10px] font-bold text-black leading-tight">
                   出番
                 </span>
               )}
