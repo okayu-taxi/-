@@ -1,7 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useStore } from './store/useStore';
 import { MonthCalendar } from './components/MonthCalendar';
-import { type Vehicle, getAlertLevel, ALERT_COLORS } from './types';
+import {
+  type Vehicle,
+  getAlertLevel,
+  getCurrentPeriod,
+  countWashesInPeriod,
+  ALERT_COLORS,
+} from './types';
 import { useGistSync, GIST_DESCRIPTION } from './lib/gistSync';
 import './index.css';
 
@@ -115,10 +121,14 @@ export default function App() {
     [vehicles, editingId]
   );
 
-  // sorted by ascending wash-day count (cars with fewer scheduled washes first)
-  const sortedVehicles = useMemo(() => {
-    return [...vehicles].sort((a, b) => a.washDates.length - b.washDates.length);
-  }, [vehicles]);
+  const currentPeriod = getCurrentPeriod(now);
+
+  // sorted by ascending current-period wash-day count (cars with fewer scheduled washes first)
+  const sortedVehicles = [...vehicles].sort(
+    (a, b) =>
+      countWashesInPeriod(a.washDates, currentPeriod) -
+      countWashesInPeriod(b.washDates, currentPeriod)
+  );
 
   function openSchedule(vehicle: Vehicle) {
     setEditingId(vehicle.id);
@@ -339,7 +349,9 @@ export default function App() {
                             <span className="text-xs text-gray-300">{v.returnTime}帰</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-300 mt-0.5">{v.washDates.length}日設定</p>
+                        <p className="text-xs text-gray-300 mt-0.5">
+                          今期 {countWashesInPeriod(v.washDates, currentPeriod)}日
+                        </p>
                       </button>
                       <button
                         onClick={() => openEdit(v)}
@@ -496,7 +508,7 @@ export default function App() {
             }}
           />
           <p className="text-sm font-medium text-center mb-1">
-            合計 {editingVehicle.washDates.length} 日
+            今期 {countWashesInPeriod(editingVehicle.washDates, currentPeriod)} 日
           </p>
           <p className="text-xs text-gray-300 text-center mb-4">
             日付をタップして洗車日を設定 / 解除

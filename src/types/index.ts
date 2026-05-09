@@ -13,15 +13,14 @@ function toDateStr(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-/** 締日は毎月15日。当期（16日〜翌15日）に洗車未予約なら yellow、14日でも未予約なら red */
-export function getAlertLevel(vehicle: Vehicle, today: Date = new Date()): AlertLevel {
+/** 当期（前月16日〜当月15日、または当月16日〜翌月15日）の開始/終了日を返す */
+export function getCurrentPeriod(today: Date = new Date()): { start: string; end: string } {
   const day = today.getDate();
   const year = today.getFullYear();
   const month = today.getMonth();
 
   let periodStart: Date;
   let periodEnd: Date;
-
   if (day > 15) {
     periodStart = new Date(year, month, 16);
     periodEnd = new Date(year, month + 1, 15);
@@ -29,13 +28,26 @@ export function getAlertLevel(vehicle: Vehicle, today: Date = new Date()): Alert
     periodStart = new Date(year, month - 1, 16);
     periodEnd = new Date(year, month, 15);
   }
+  return { start: toDateStr(periodStart), end: toDateStr(periodEnd) };
+}
 
-  const ps = toDateStr(periodStart);
-  const pe = toDateStr(periodEnd);
-  const hasWash = vehicle.washDates.some((d) => d >= ps && d <= pe);
+export function countWashesInPeriod(
+  washDates: string[],
+  period: { start: string; end: string }
+): number {
+  return washDates.reduce(
+    (n, d) => (d >= period.start && d <= period.end ? n + 1 : n),
+    0
+  );
+}
+
+/** 締日は毎月15日。当期（16日〜翌15日）に洗車未予約なら yellow、14日でも未予約なら red */
+export function getAlertLevel(vehicle: Vehicle, today: Date = new Date()): AlertLevel {
+  const period = getCurrentPeriod(today);
+  const hasWash = vehicle.washDates.some((d) => d >= period.start && d <= period.end);
 
   if (hasWash) return 'none';
-  if (day === 14) return 'red';
+  if (today.getDate() === 14) return 'red';
   return 'yellow';
 }
 
