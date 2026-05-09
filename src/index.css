@@ -15,6 +15,12 @@ body,
     'Noto Sans JP', sans-serif;
   -webkit-font-smoothing: antialiased;
   background: #fff;
+  overscroll-behavior: none;
+}
+
+html,
+body {
+  overflow: hidden;
 }
 
 .app-shell {

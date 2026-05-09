@@ -244,7 +244,7 @@ export default function App() {
 
     return (
       <div className="app-shell">
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto overscroll-contain">
           <div className="px-4 pt-safe">
             <MonthCalendar
               year={calYear}
@@ -327,7 +327,7 @@ export default function App() {
       <div className="app-shell">
         <PageTitle title="車両管理" />
 
-        <div className="flex-1 overflow-y-auto flex flex-col">
+        <div className="flex-1 overflow-y-auto overscroll-contain flex flex-col">
           {vehicles.length === 0 ? (
             <p className="text-sm text-gray-300 px-4 py-6 mt-auto">車両が登録されていません</p>
           ) : (
@@ -495,7 +495,7 @@ export default function App() {
       <div className="app-shell">
         <PageTitle title={`${editingVehicle.plateNumber} の洗車日`} />
 
-        <div className="flex-1 overflow-y-auto px-4">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4">
           <MonthCalendar
             year={calYear}
             month={calMonth}
@@ -536,7 +536,7 @@ export default function App() {
       <div className="app-shell">
         <PageTitle title="設定" />
 
-        <div className="flex-1 overflow-y-auto flex flex-col">
+        <div className="flex-1 overflow-y-auto overscroll-contain flex flex-col">
           <div className="px-4 py-6 space-y-6 mt-auto">
             <div>
               <p className="text-xs text-gray-300">
