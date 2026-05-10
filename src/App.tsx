@@ -5,6 +5,7 @@ import {
   type Vehicle,
   getAlertLevel,
   getCurrentPeriod,
+  getNextPeriod,
   countWashesInPeriod,
   ALERT_COLORS,
 } from './types';
@@ -122,6 +123,7 @@ export default function App() {
   );
 
   const currentPeriod = getCurrentPeriod(now);
+  const nextPeriod = getNextPeriod(now);
 
   // sorted by ascending current-period wash-day count (cars with fewer scheduled washes first)
   const sortedVehicles = [...vehicles].sort(
@@ -351,6 +353,11 @@ export default function App() {
                         </div>
                         <p className="text-xs text-gray-300 mt-0.5">
                           今期 {countWashesInPeriod(v.washDates, currentPeriod)}日
+                          {countWashesInPeriod(v.washDates, nextPeriod) > 0 && (
+                            <span className="ml-2">
+                              来期 {countWashesInPeriod(v.washDates, nextPeriod)}日
+                            </span>
+                          )}
                         </p>
                       </button>
                       <button
@@ -509,6 +516,11 @@ export default function App() {
           />
           <p className="text-sm font-medium text-center mb-1">
             今期 {countWashesInPeriod(editingVehicle.washDates, currentPeriod)} 日
+            {countWashesInPeriod(editingVehicle.washDates, nextPeriod) > 0 && (
+              <span className="ml-3 text-gray-400">
+                来期 {countWashesInPeriod(editingVehicle.washDates, nextPeriod)} 日
+              </span>
+            )}
           </p>
           <p className="text-xs text-gray-300 text-center mb-4">
             日付をタップして洗車日を設定 / 解除

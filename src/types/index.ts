@@ -31,6 +31,24 @@ export function getCurrentPeriod(today: Date = new Date()): { start: string; end
   return { start: toDateStr(periodStart), end: toDateStr(periodEnd) };
 }
 
+/** 当期の次の期間（今期の翌日から、次の締め日まで）を返す */
+export function getNextPeriod(today: Date = new Date()): { start: string; end: string } {
+  const day = today.getDate();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  let periodStart: Date;
+  let periodEnd: Date;
+  if (day > 15) {
+    periodStart = new Date(year, month + 1, 16);
+    periodEnd = new Date(year, month + 2, 15);
+  } else {
+    periodStart = new Date(year, month, 16);
+    periodEnd = new Date(year, month + 1, 15);
+  }
+  return { start: toDateStr(periodStart), end: toDateStr(periodEnd) };
+}
+
 export function countWashesInPeriod(
   washDates: string[],
   period: { start: string; end: string }
