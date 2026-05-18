@@ -145,20 +145,19 @@ export function MonthCalendar({
           const isHoliday = HOLIDAYS.has(dateStr);
           const isRedDay = isSunday || isHoliday;
 
-          // Apple Calendar style:
-          // - Today (not picked): red number, no fill
-          // - Picked date (not today): black-filled circle
-          // - Today AND picked: red-filled circle
+          // - Picked: black-filled circle (white number)
+          // - Today (not picked): ring outline, natural number color
           let circleCls = '';
           let isFilled = false;
           if (isHighlighted && !isEditMode) {
-            circleCls = isToday ? 'bg-[#FF3B30] text-white' : 'bg-black text-white';
+            circleCls = 'bg-black text-white';
             isFilled = true;
+          } else if (isToday) {
+            circleCls = 'ring-1 ring-gray-400';
           }
 
           const numColor = isFilled
             ? ''
-            : isToday ? 'text-[#FF3B30] font-semibold'
             : isRedDay ? 'text-red-500'
             : isSaturday ? 'text-blue-500'
             : 'text-black';
