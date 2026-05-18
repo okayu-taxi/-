@@ -246,69 +246,67 @@ export default function App() {
 
     return (
       <div className="app-shell">
-        <div className="flex-1 overflow-y-auto overscroll-contain">
-          <div className="px-4 pt-safe">
-            <MonthCalendar
-              year={calYear}
-              month={calMonth}
-              onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
-              countsByDate={countsByDate}
-              highlightedDate={pickedDate}
-              onDateSelect={setPickedDate}
-              onTodayClick={() => {
-                setCalYear(now.getFullYear());
-                setCalMonth(now.getMonth());
-                setPickedDate(today);
-              }}
-            />
-          </div>
+        <div className="px-4 pt-safe shrink-0">
+          <MonthCalendar
+            year={calYear}
+            month={calMonth}
+            onMonthChange={(y, m) => { setCalYear(y); setCalMonth(m); }}
+            countsByDate={countsByDate}
+            highlightedDate={pickedDate}
+            onDateSelect={setPickedDate}
+            onTodayClick={() => {
+              setCalYear(now.getFullYear());
+              setCalMonth(now.getMonth());
+              setPickedDate(today);
+            }}
+          />
+        </div>
 
-          <div className="px-4 pt-4 pb-4 border-t border-gray-100 mt-2">
-            <div className="flex items-baseline justify-between mb-3">
-              <p className="text-xs text-gray-400 uppercase tracking-widest">
-                {dateLabel}
-                {pickedCars.length > 0 && (
-                  <span className="text-black font-bold ml-2">{pickedCars.length}台</span>
-                )}
-              </p>
-              {!isPickedToday && (
-                <button
-                  onClick={() => setPickedDate(today)}
-                  className="text-xs text-gray-400 underline"
-                >
-                  今日へ
-                </button>
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-4 border-t border-gray-100 mt-2">
+          <div className="flex items-baseline justify-between mb-3">
+            <p className="text-xs text-gray-400 uppercase tracking-widest">
+              {dateLabel}
+              {pickedCars.length > 0 && (
+                <span className="text-black font-bold ml-2">{pickedCars.length}台</span>
               )}
-            </div>
-            {pickedCars.length === 0 ? (
-              <p className="text-sm text-gray-300">予定なし</p>
-            ) : (
-              <div className="space-y-2">
-                {pickedCarsByTime.map(({ time, cars }) => (
-                  <div key={time || 'no-time'} className="flex items-baseline gap-3">
-                    <span className="text-[11px] text-gray-400 w-10 shrink-0">
-                      {time || '時刻なし'}
-                    </span>
-                    <ul className="flex flex-wrap gap-x-3 gap-y-1">
-                      {cars.map((v) => {
-                        const alert = getAlertLevel(v, now);
-                        return (
-                          <li key={v.id} className="flex items-baseline gap-1">
-                            <span className={`text-sm font-medium ${ALERT_COLORS[alert]}`}>
-                              {v.plateNumber}
-                            </span>
-                            {v.customerName && (
-                              <span className="text-[11px] text-gray-400">{v.customerName}</span>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+            </p>
+            {!isPickedToday && (
+              <button
+                onClick={() => setPickedDate(today)}
+                className="text-xs text-gray-400 underline"
+              >
+                今日へ
+              </button>
             )}
           </div>
+          {pickedCars.length === 0 ? (
+            <p className="text-sm text-gray-300">予定なし</p>
+          ) : (
+            <div className="space-y-2">
+              {pickedCarsByTime.map(({ time, cars }) => (
+                <div key={time || 'no-time'} className="flex items-baseline gap-3">
+                  <span className="text-[11px] text-gray-400 w-10 shrink-0">
+                    {time || '時刻なし'}
+                  </span>
+                  <ul className="flex flex-wrap gap-x-3 gap-y-1">
+                    {cars.map((v) => {
+                      const alert = getAlertLevel(v, now);
+                      return (
+                        <li key={v.id} className="flex items-baseline gap-1">
+                          <span className={`text-sm font-medium ${ALERT_COLORS[alert]}`}>
+                            {v.plateNumber}
+                          </span>
+                          {v.customerName && (
+                            <span className="text-[11px] text-gray-400">{v.customerName}</span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="border-t border-gray-100 pb-safe flex">
