@@ -145,22 +145,20 @@ export function MonthCalendar({
           const isHoliday = HOLIDAYS.has(dateStr);
           const isRedDay = isSunday || isHoliday;
 
+          // Apple Calendar style:
+          // - Today (not picked): red number, no fill
+          // - Picked date (not today): black-filled circle
+          // - Today AND picked: red-filled circle
           let circleCls = '';
           let isFilled = false;
-          if (isToday) {
-            // Today is always the filled circle (Apple-Calendar style).
-            circleCls = 'bg-black text-white';
+          if (isHighlighted && !isEditMode) {
+            circleCls = isToday ? 'bg-[#FF3B30] text-white' : 'bg-black text-white';
             isFilled = true;
-          }
-          // In edit mode, selection is shown as "出番" pill below the day so it
-          // can't be confused with today's filled circle.
-
-          if (isHighlighted && !isEditMode && !isToday) {
-            circleCls += ' ring-2 ring-offset-1 ring-black';
           }
 
           const numColor = isFilled
             ? ''
+            : isToday ? 'text-[#FF3B30] font-semibold'
             : isRedDay ? 'text-red-500'
             : isSaturday ? 'text-blue-500'
             : 'text-black';
@@ -183,7 +181,7 @@ export function MonthCalendar({
                 {day}
               </span>
               {!isEditMode && count !== undefined && count > 0 && (
-                <span className="text-[10px] font-bold text-white bg-black px-1.5 rounded-full leading-tight">
+                <span className="text-[10px] font-semibold text-white bg-gray-400 px-1.5 rounded-full leading-tight tabular-nums">
                   {count}
                 </span>
               )}

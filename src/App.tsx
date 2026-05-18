@@ -39,19 +39,23 @@ function sortByReturnTime(vehicles: Vehicle[]): Vehicle[] {
 // ── shared nav ──────────────────────────────────────────────────────────────────────────────
 function PageTitle({ title }: { title: string }) {
   return (
-    <div className="border-b border-gray-100 pt-safe shrink-0">
-      <div className="flex items-center justify-center h-12 px-4">
-        <span className="text-sm font-medium">{title}</span>
+    <div className="pt-safe shrink-0 bg-white/85 backdrop-blur-xl border-b border-gray-200/60">
+      <div className="flex items-center justify-center h-11 px-4">
+        <span className="text-[17px] font-semibold tracking-tight text-black">{title}</span>
       </div>
     </div>
   );
 }
 
-function BottomBack({ onBack, label = '← 戻る' }: { onBack: () => void; label?: string }) {
+function BottomBack({ onBack, label = '戻る' }: { onBack: () => void; label?: string }) {
   return (
-    <div className="border-t border-gray-100 pb-safe shrink-0">
-      <button onClick={onBack} className="w-full h-14 text-sm text-black flex items-center justify-center">
-        {label}
+    <div className="border-t border-gray-200/60 pb-safe shrink-0 bg-white/85 backdrop-blur-xl">
+      <button
+        onClick={onBack}
+        className="w-full h-12 text-[15px] text-[#007AFF] flex items-center justify-center gap-0.5 active:opacity-60"
+      >
+        <span className="text-lg leading-none">‹</span>
+        <span>{label}</span>
       </button>
     </div>
   );
@@ -262,30 +266,30 @@ export default function App() {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-3 pb-3 border-t border-gray-100 mt-1">
-          <div className="flex items-baseline justify-between mb-3">
-            <p className="text-xs text-gray-400 uppercase tracking-widest">
+        <div className="flex-1 overflow-y-auto overscroll-contain border-t border-gray-200/60 mt-1">
+          <div className="flex items-baseline justify-between px-4 pt-3 pb-2">
+            <p className="text-[15px] font-semibold text-black">
               {dateLabel}
               {pickedCars.length > 0 && (
-                <span className="text-black font-bold ml-2">{pickedCars.length}台</span>
+                <span className="text-gray-400 font-normal ml-2">{pickedCars.length}台</span>
               )}
             </p>
             {!isPickedToday && (
               <button
                 onClick={() => setPickedDate(today)}
-                className="text-xs text-gray-400 underline"
+                className="text-[13px] text-[#007AFF] active:opacity-60"
               >
                 今日へ
               </button>
             )}
           </div>
           {pickedCars.length === 0 ? (
-            <p className="text-sm text-gray-300">予定なし</p>
+            <p className="px-4 py-3 text-[14px] text-gray-400">予定なし</p>
           ) : (
-            <div className="space-y-2">
+            <div className="px-4 pb-3 space-y-1.5">
               {pickedCarsByTime.map(({ time, cars }) => (
                 <div key={time || 'no-time'} className="flex items-baseline gap-3">
-                  <span className="text-[11px] text-gray-400 w-10 shrink-0">
+                  <span className="text-[12px] text-gray-500 w-11 shrink-0 tabular-nums">
                     {time || '時刻なし'}
                   </span>
                   <ul className="flex flex-wrap gap-x-3 gap-y-1">
@@ -293,7 +297,7 @@ export default function App() {
                       const alert = getAlertLevel(v, now);
                       return (
                         <li key={v.id} className="flex items-baseline gap-1">
-                          <span className={`text-sm font-medium ${ALERT_COLORS[alert]}`}>
+                          <span className={`text-[15px] font-medium ${ALERT_COLORS[alert]}`}>
                             {v.plateNumber}
                           </span>
                           {v.customerName && (
@@ -309,11 +313,17 @@ export default function App() {
           )}
         </div>
 
-        <div className="border-t border-gray-100 pb-safe flex">
-          <button onClick={() => setView('vehicles')} className="flex-1 h-12 text-sm text-black">
+        <div className="border-t border-gray-200/60 pb-safe flex bg-white/85 backdrop-blur-xl">
+          <button
+            onClick={() => setView('vehicles')}
+            className="flex-1 h-12 text-[13px] font-medium text-[#007AFF] active:opacity-60"
+          >
             車両管理
           </button>
-          <button onClick={() => setView('backup')} className="flex-1 h-12 text-sm text-gray-400">
+          <button
+            onClick={() => setView('backup')}
+            className="flex-1 h-12 text-[13px] text-gray-500 active:opacity-60"
+          >
             設定
           </button>
         </div>
@@ -324,32 +334,32 @@ export default function App() {
   // ── VEHICLE LIST ──────────────────────────────────────────────────────────────────────
   if (view === 'vehicles') {
     return (
-      <div className="app-shell">
+      <div className="app-shell bg-[#F2F2F7]">
         <PageTitle title="車両管理" />
 
-        <div className="flex-1 overflow-y-auto overscroll-contain flex flex-col">
+        <div className="flex-1 overflow-y-auto overscroll-contain">
           {vehicles.length === 0 ? (
-            <p className="text-sm text-gray-300 px-4 py-6 mt-auto">車両が登録されていません</p>
+            <p className="text-sm text-gray-400 px-4 py-12 text-center">車両が登録されていません</p>
           ) : (
-            <ul className="divide-y divide-gray-100 mt-auto">
+            <ul className="mx-4 mt-4 bg-white rounded-xl overflow-hidden divide-y divide-gray-200/60">
               {sortedVehicles.map((v) => {
                 const alert = getAlertLevel(v, now);
                 return (
                   <li key={v.id}>
-                    <div className="flex items-center px-4 py-3 gap-2">
-                      <button onClick={() => openSchedule(v)} className="flex-1 text-left min-w-0">
+                    <div className="flex items-center pl-4 pr-1 py-2.5 gap-1">
+                      <button onClick={() => openSchedule(v)} className="flex-1 text-left min-w-0 py-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className={`text-sm font-medium ${ALERT_COLORS[alert]}`}>
+                          <span className={`text-[15px] font-medium ${ALERT_COLORS[alert]}`}>
                             {v.plateNumber}
                           </span>
                           {v.customerName && (
-                            <span className="text-xs text-gray-400">{v.customerName}</span>
+                            <span className="text-[13px] text-gray-500">{v.customerName}</span>
                           )}
                           {v.returnTime && (
-                            <span className="text-xs text-gray-300">{v.returnTime}帰</span>
+                            <span className="text-[12px] text-gray-400">{v.returnTime}帰</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-300 mt-0.5">
+                        <p className="text-[12px] text-gray-400 mt-0.5">
                           今期 {countWashesInPeriod(v.washDates, currentPeriod)}日
                           {countWashesInPeriod(v.washDates, nextPeriod) > 0 && (
                             <span className="ml-2">
@@ -360,30 +370,30 @@ export default function App() {
                       </button>
                       <button
                         onClick={() => openEdit(v)}
-                        className="text-xs text-gray-400 w-8 h-11 flex items-center justify-center"
+                        className="text-[13px] text-[#007AFF] px-3 h-11 flex items-center"
                       >
                         編集
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(v.id)}
-                        className="text-xs text-gray-300 w-8 h-11 flex items-center justify-center"
+                        className="text-[13px] text-[#FF3B30] px-3 h-11 flex items-center"
                       >
                         削除
                       </button>
                     </div>
                     {deleteConfirm === v.id && (
-                      <div className="mx-4 mb-3 p-3 border border-gray-200 rounded-lg text-sm">
-                        <p className="text-gray-600 mb-2">削除しますか？</p>
+                      <div className="mx-3 mb-3 p-3 bg-[#F2F2F7] rounded-lg text-[13px]">
+                        <p className="text-gray-700 mb-2">削除しますか？</p>
                         <div className="flex gap-2">
                           <button
                             onClick={() => { deleteVehicle(v.id); setDeleteConfirm(null); }}
-                            className="px-3 py-1 bg-black text-white text-xs rounded-lg"
+                            className="px-3 py-1.5 bg-[#FF3B30] text-white text-xs font-medium rounded-lg"
                           >
                             削除
                           </button>
                           <button
                             onClick={() => setDeleteConfirm(null)}
-                            className="px-3 py-1 border border-gray-200 text-xs rounded-lg"
+                            className="px-3 py-1.5 bg-white text-gray-700 text-xs rounded-lg"
                           >
                             キャンセル
                           </button>
@@ -395,20 +405,21 @@ export default function App() {
               })}
             </ul>
           )}
-        </div>
 
-        <div className="border-t border-gray-100 shrink-0">
-          <div className="px-4 pt-2 pb-1 flex gap-4 text-xs">
+          <div className="mx-4 mt-3 mb-2 px-1 flex flex-wrap gap-x-4 gap-y-1 text-[11px]">
             <span className="text-yellow-500">● 当期未予約</span>
             <span className="text-red-500">● 前日未予約</span>
-            <span className="text-gray-300">締日: 毎月15日</span>
+            <span className="text-gray-400">締日: 毎月15日</span>
           </div>
+        </div>
+
+        <div className="bg-white border-t border-gray-200/60 shrink-0">
           <form onSubmit={handleAdd} className="px-4 py-3 space-y-2">
             <input
               value={newPlate}
               onChange={(e) => setNewPlate(e.target.value)}
               placeholder="車番 *"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+              className="w-full bg-[#F2F2F7] rounded-lg px-3 py-2.5 text-[15px] outline-none focus:bg-white focus:ring-1 focus:ring-[#007AFF]"
               autoCapitalize="none"
               required
             />
@@ -416,17 +427,17 @@ export default function App() {
               value={newCustomer}
               onChange={(e) => setNewCustomer(e.target.value)}
               placeholder="顧客名"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+              className="w-full bg-[#F2F2F7] rounded-lg px-3 py-2.5 text-[15px] outline-none focus:bg-white focus:ring-1 focus:ring-[#007AFF]"
             />
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <input
                 type="time"
                 value={newReturnTime}
                 onChange={(e) => setNewReturnTime(e.target.value)}
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
+                className="flex-1 bg-[#F2F2F7] rounded-lg px-3 py-2.5 text-[15px] outline-none focus:bg-white focus:ring-1 focus:ring-[#007AFF]"
               />
-              <span className="text-xs text-gray-400 self-center shrink-0">帰車時刻</span>
-              <button type="submit" className="px-4 py-2 bg-black text-white text-sm rounded-lg shrink-0">
+              <span className="text-[12px] text-gray-500 shrink-0">帰車時刻</span>
+              <button type="submit" className="px-4 py-2.5 bg-black text-white text-[15px] font-medium rounded-lg shrink-0">
                 追加
               </button>
             </div>
@@ -440,56 +451,59 @@ export default function App() {
   // ── EDIT VEHICLE ─────────────────────────────────────────────────────────────────────
   if (view === 'edit' && editingVehicle) {
     return (
-      <div className="app-shell">
+      <div className="app-shell bg-[#F2F2F7]">
         <PageTitle title="車両編集" />
 
-        <div className="flex-1" />
-
-        <div className="border-t border-gray-100 shrink-0">
-          <form onSubmit={handleEditSave} className="px-4 pt-4 pb-2 space-y-3">
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">車番</label>
-              <input
-                value={editPlate}
-                onChange={(e) => setEditPlate(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-                required
-                autoCapitalize="none"
-              />
+        <div className="flex-1 overflow-y-auto overscroll-contain">
+          <form onSubmit={handleEditSave} className="pt-4 pb-2">
+            <div className="mx-4 bg-white rounded-xl overflow-hidden divide-y divide-gray-200/60">
+              <div className="flex items-center px-4 py-2.5 gap-3">
+                <label className="text-[15px] text-black w-20 shrink-0">車番</label>
+                <input
+                  value={editPlate}
+                  onChange={(e) => setEditPlate(e.target.value)}
+                  className="flex-1 text-[15px] outline-none bg-transparent placeholder:text-gray-400"
+                  required
+                  autoCapitalize="none"
+                />
+              </div>
+              <div className="flex items-center px-4 py-2.5 gap-3">
+                <label className="text-[15px] text-black w-20 shrink-0">顧客名</label>
+                <input
+                  value={editCustomer}
+                  onChange={(e) => setEditCustomer(e.target.value)}
+                  className="flex-1 text-[15px] outline-none bg-transparent placeholder:text-gray-400"
+                />
+              </div>
+              <div className="flex items-center px-4 py-2.5 gap-3">
+                <label className="text-[15px] text-black w-20 shrink-0">帰車時刻</label>
+                <input
+                  type="time"
+                  value={editReturnTime}
+                  onChange={(e) => setEditReturnTime(e.target.value)}
+                  className="flex-1 text-[15px] outline-none bg-transparent placeholder:text-gray-400"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">顧客名</label>
-              <input
-                value={editCustomer}
-                onChange={(e) => setEditCustomer(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-              />
+            <div className="mx-4 mt-5 space-y-2">
+              <button
+                type="submit"
+                className="w-full py-3 bg-black text-white text-[15px] font-medium rounded-xl"
+              >
+                保存
+              </button>
+              <button
+                type="button"
+                onClick={() => openSchedule(editingVehicle)}
+                className="w-full py-3 bg-white text-[15px] text-[#007AFF] rounded-xl"
+              >
+                洗車日を設定
+              </button>
             </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">帰車時刻</label>
-              <input
-                type="time"
-                value={editReturnTime}
-                onChange={(e) => setEditReturnTime(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full py-3 bg-black text-white text-sm rounded-lg"
-            >
-              保存
-            </button>
-            <button
-              type="button"
-              onClick={() => openSchedule(editingVehicle)}
-              className="w-full py-3 border border-gray-200 text-sm rounded-lg"
-            >
-              洗車日を設定
-            </button>
           </form>
-          <BottomBack onBack={() => setView('vehicles')} />
         </div>
+
+        <BottomBack onBack={() => setView('vehicles')} />
       </div>
     );
   }
@@ -512,7 +526,7 @@ export default function App() {
               setCalMonth(now.getMonth());
             }}
           />
-          <p className="text-sm font-medium text-center mb-1">
+          <p className="text-[15px] font-medium text-center mb-1">
             今期 {countWashesInPeriod(editingVehicle.washDates, currentPeriod)} 日
             {countWashesInPeriod(editingVehicle.washDates, nextPeriod) > 0 && (
               <span className="ml-3 text-gray-400">
@@ -520,21 +534,21 @@ export default function App() {
               </span>
             )}
           </p>
-          <p className="text-xs text-gray-300 text-center mb-4">
+          <p className="text-[12px] text-gray-400 text-center mb-4">
             日付をタップして洗車日を設定 / 解除
           </p>
         </div>
 
-        <div className="border-t border-gray-100 pb-safe shrink-0">
+        <div className="border-t border-gray-200/60 pb-safe shrink-0 bg-white">
           <div className="px-4 pt-3 pb-1">
             <button
               onClick={() => setView('main')}
-              className="w-full py-3 bg-black text-white text-sm rounded-lg"
+              className="w-full py-3 bg-black text-white text-[15px] font-medium rounded-xl"
             >
               確定してホームへ
             </button>
           </div>
-          <BottomBack onBack={() => setView('vehicles')} label="← 車両一覧へ戻る" />
+          <BottomBack onBack={() => setView('vehicles')} label="車両一覧へ戻る" />
         </div>
       </div>
     );
@@ -542,158 +556,169 @@ export default function App() {
 
   // ── BACKUP ──────────────────────────────────────────────────────────────────────────────
   if (view === 'backup') {
+    const syncStatusLabel =
+      sync.status === 'syncing'
+        ? '同期中…'
+        : sync.status === 'error'
+        ? 'エラー'
+        : '有効';
+    const syncStatusColor =
+      sync.status === 'syncing'
+        ? 'text-gray-400'
+        : sync.status === 'error'
+        ? 'text-[#FF3B30]'
+        : 'text-gray-500';
+
     return (
-      <div className="app-shell">
+      <div className="app-shell bg-[#F2F2F7]">
         <PageTitle title="設定" />
 
-        <div className="flex-1 overflow-y-auto overscroll-contain flex flex-col">
-          <div className="px-4 py-6 space-y-6 mt-auto">
-            <div>
-              <p className="text-xs text-gray-300">
-                登録車両数: {vehicles.length}台
-              </p>
+        <div className="flex-1 overflow-y-auto overscroll-contain pb-6">
+          {/* 車両情報 */}
+          <p className="px-4 pt-5 pb-1.5 text-[12px] text-gray-500 uppercase tracking-wide">
+            車両
+          </p>
+          <div className="mx-4 bg-white rounded-xl overflow-hidden">
+            <div className="flex items-center px-4 py-3">
+              <span className="text-[15px] text-black">登録車両数</span>
+              <span className="ml-auto text-[15px] text-gray-400">{vehicles.length} 台</span>
             </div>
+          </div>
 
-            <div className="border-t border-gray-100 pt-6">
-              <div className="flex items-baseline justify-between mb-1">
-                <p className="text-sm font-medium text-black">GitHub Gist 自動同期</p>
-                {sync.enabled && (
-                  <span
-                    className={`text-xs ${
-                      sync.status === 'syncing'
-                        ? 'text-gray-400'
-                        : sync.status === 'error'
-                        ? 'text-red-500'
-                        : 'text-black'
-                    }`}
-                  >
-                    {sync.status === 'syncing'
-                      ? '同期中…'
-                      : sync.status === 'error'
-                      ? 'エラー'
-                      : '有効'}
-                  </span>
-                )}
-              </div>
-
-              {!sync.enabled ? (
-                <>
-                  <p className="text-xs text-gray-400 mb-3">
-                    GitHub の Personal Access Token (gist 権限のみ) を貼り付けて同期を開始すると、変更が
-                    自動で private Gist (description: 「{GIST_DESCRIPTION}」) に保存されます。別端末でも
-                    同じ PAT を貼れば自動で復元できます。
-                  </p>
+          {/* Gist 同期 */}
+          <p className="px-4 pt-6 pb-1.5 text-[12px] text-gray-500 uppercase tracking-wide">
+            GitHub Gist 自動同期
+          </p>
+          <div className="mx-4 bg-white rounded-xl overflow-hidden">
+            {!sync.enabled ? (
+              <div className="p-4 space-y-3">
+                <p className="text-[13px] text-gray-500 leading-relaxed">
+                  GitHub の Personal Access Token (gist 権限のみ) を貼り付けて同期を開始すると、変更が
+                  自動で private Gist (description:「{GIST_DESCRIPTION}」) に保存されます。別端末でも
+                  同じ PAT を貼れば自動で復元できます。
+                </p>
+                <input
+                  type={showPat ? 'text' : 'password'}
+                  value={patDraft}
+                  onChange={(e) => setPatDraft(e.target.value)}
+                  placeholder="ghp_xxxxxxxxxxxx"
+                  className="w-full bg-[#F2F2F7] rounded-lg px-3 py-2.5 text-[15px] outline-none focus:bg-white focus:ring-1 focus:ring-[#007AFF]"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+                <label className="flex items-center gap-2 text-[13px] text-gray-500">
                   <input
-                    type={showPat ? 'text' : 'password'}
-                    value={patDraft}
-                    onChange={(e) => setPatDraft(e.target.value)}
-                    placeholder="ghp_xxxxxxxxxxxx"
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-black mb-2"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck={false}
+                    type="checkbox"
+                    checked={showPat}
+                    onChange={(e) => setShowPat(e.target.checked)}
                   />
-                  <label className="flex items-center gap-2 text-xs text-gray-400 mb-3">
-                    <input
-                      type="checkbox"
-                      checked={showPat}
-                      onChange={(e) => setShowPat(e.target.checked)}
-                    />
-                    PAT を表示
-                  </label>
-                  <button
-                    onClick={handleEnableSync}
-                    disabled={sync.status === 'syncing'}
-                    className="w-full py-3 bg-black text-white text-sm rounded-lg disabled:opacity-50"
-                  >
-                    {sync.status === 'syncing' ? '接続中…' : '同期を開始'}
-                  </button>
-                  <a
-                    href="https://github.com/settings/tokens/new?scopes=gist&description=Taxi+Car+Wash"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-xs text-gray-400 underline mt-3 text-center"
-                  >
-                    PAT を新規作成（gist 権限のみ）
-                  </a>
-                </>
-              ) : (
-                <>
-                  <p className="text-xs text-gray-400 mb-1">
-                    Gist ID: <span className="text-gray-500">{sync.gistId.slice(0, 12)}…</span>
-                  </p>
-                  {sync.lastSync && (
-                    <p className="text-xs text-gray-400 mb-3">
-                      最終同期: {formatLastSync(sync.lastSync)}
-                    </p>
-                  )}
-                  {sync.error && (
-                    <p className="text-xs text-red-500 mb-3 break-all">{sync.error}</p>
-                  )}
-                  <div className="flex gap-2 mb-2">
-                    <button
-                      onClick={handlePushNow}
-                      disabled={sync.status === 'syncing'}
-                      className="flex-1 py-3 border border-gray-200 text-sm rounded-lg disabled:opacity-50"
-                    >
-                      今すぐ保存
-                    </button>
-                    <button
-                      onClick={() => setPullConfirm(true)}
-                      disabled={sync.status === 'syncing'}
-                      className="flex-1 py-3 border border-gray-200 text-sm rounded-lg disabled:opacity-50"
-                    >
-                      Gist から復元
-                    </button>
+                  PAT を表示
+                </label>
+                <button
+                  onClick={handleEnableSync}
+                  disabled={sync.status === 'syncing'}
+                  className="w-full py-3 bg-black text-white text-[15px] font-medium rounded-lg disabled:opacity-50"
+                >
+                  {sync.status === 'syncing' ? '接続中…' : '同期を開始'}
+                </button>
+                <a
+                  href="https://github.com/settings/tokens/new?scopes=gist&description=Taxi+Car+Wash"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-[13px] text-[#007AFF] text-center"
+                >
+                  PAT を新規作成（gist 権限のみ）
+                </a>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200/60">
+                <div className="flex items-center px-4 py-3">
+                  <span className="text-[15px] text-black">状態</span>
+                  <span className={`ml-auto text-[15px] ${syncStatusColor}`}>{syncStatusLabel}</span>
+                </div>
+                <div className="flex items-center px-4 py-3">
+                  <span className="text-[15px] text-black">Gist ID</span>
+                  <span className="ml-auto text-[15px] text-gray-400 truncate max-w-[55%]">
+                    {sync.gistId.slice(0, 12)}…
+                  </span>
+                </div>
+                {sync.lastSync && (
+                  <div className="flex items-center px-4 py-3">
+                    <span className="text-[15px] text-black">最終同期</span>
+                    <span className="ml-auto text-[15px] text-gray-400">{formatLastSync(sync.lastSync)}</span>
                   </div>
-                  {pullConfirm && (
-                    <div className="p-3 border border-gray-200 rounded-lg text-sm mb-2">
-                      <p className="text-gray-600 mb-2">
-                        現在のデータを Gist の内容で上書きします。よろしいですか？
-                      </p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handlePullNow}
-                          className="px-3 py-1 bg-black text-white text-xs rounded-lg"
-                        >
-                          復元
-                        </button>
-                        <button
-                          onClick={() => setPullConfirm(false)}
-                          className="px-3 py-1 border border-gray-200 text-xs rounded-lg"
-                        >
-                          キャンセル
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  <button
-                    onClick={handleDisableSync}
-                    className="w-full py-3 text-xs text-gray-400"
-                  >
-                    同期を解除（PAT も削除されます）
-                  </button>
-                </>
-              )}
-            </div>
-
-            <div className="border border-gray-200 rounded-2xl p-5">
-              <p className="text-xs text-gray-400 mb-2">再読み込み</p>
-              <p className="text-sm text-gray-700 mb-4">
-                動作がおかしい時・データが反映されない時に押してください。
-              </p>
-              <button
-                onClick={handleHardReload}
-                className="w-full py-4 bg-black text-white text-base font-medium rounded-xl"
-              >
-                再読み込みする
-              </button>
-            </div>
-
-            {backupMsg && (
-              <p className="text-xs text-center text-black">{backupMsg}</p>
+                )}
+                {sync.error && (
+                  <div className="px-4 py-3">
+                    <p className="text-[13px] text-[#FF3B30] break-all">{sync.error}</p>
+                  </div>
+                )}
+                <button
+                  onClick={handlePushNow}
+                  disabled={sync.status === 'syncing'}
+                  className="w-full text-left px-4 py-3 text-[15px] text-[#007AFF] disabled:opacity-50"
+                >
+                  今すぐ保存
+                </button>
+                <button
+                  onClick={() => setPullConfirm(true)}
+                  disabled={sync.status === 'syncing'}
+                  className="w-full text-left px-4 py-3 text-[15px] text-[#007AFF] disabled:opacity-50"
+                >
+                  Gist から復元
+                </button>
+                <button
+                  onClick={handleDisableSync}
+                  className="w-full text-left px-4 py-3 text-[15px] text-[#FF3B30]"
+                >
+                  同期を解除（PAT も削除）
+                </button>
+              </div>
             )}
           </div>
+
+          {pullConfirm && (
+            <div className="mx-4 mt-3 p-3 bg-white rounded-xl">
+              <p className="text-[13px] text-gray-700 mb-2">
+                現在のデータを Gist の内容で上書きします。よろしいですか？
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePullNow}
+                  className="px-3 py-1.5 bg-[#FF3B30] text-white text-xs font-medium rounded-lg"
+                >
+                  復元
+                </button>
+                <button
+                  onClick={() => setPullConfirm(false)}
+                  className="px-3 py-1.5 bg-[#F2F2F7] text-gray-700 text-xs rounded-lg"
+                >
+                  キャンセル
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 再読み込み */}
+          <p className="px-4 pt-6 pb-1.5 text-[12px] text-gray-500 uppercase tracking-wide">
+            メンテナンス
+          </p>
+          <div className="mx-4 bg-white rounded-xl p-4">
+            <p className="text-[13px] text-gray-500 mb-3">
+              動作がおかしい時・データが反映されない時に押してください。
+            </p>
+            <button
+              onClick={handleHardReload}
+              className="w-full py-3 bg-black text-white text-[15px] font-medium rounded-lg"
+            >
+              再読み込みする
+            </button>
+          </div>
+
+          {backupMsg && (
+            <p className="mt-4 text-[13px] text-center text-gray-500">{backupMsg}</p>
+          )}
         </div>
 
         <BottomBack onBack={() => setView('main')} />
