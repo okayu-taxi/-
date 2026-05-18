@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, claude/taxi-wash-management-app-2Qnf4]
+    branches: [main, claude/taxi-wash-management-app-2Qnf4, claude/fix-carwash-date-calc-ZPiEh]
   workflow_dispatch:
 
 permissions:
