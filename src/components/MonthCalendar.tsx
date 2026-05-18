@@ -173,12 +173,12 @@ export function MonthCalendar({
                 if (isEditMode) onDateToggle?.(dateStr);
                 else onDateSelect?.(dateStr);
               }}
-              className={`flex flex-col items-center py-1.5 gap-0.5 min-h-[2.75rem] ${
+              className={`flex flex-col items-center py-0.5 gap-0 min-h-[2rem] ${
                 tappable ? 'active:opacity-60' : 'cursor-default'
               }`}
             >
               <span
-                className={`w-8 h-8 flex items-center justify-center text-sm rounded-full ${circleCls} ${numColor}`}
+                className={`w-7 h-7 flex items-center justify-center text-sm rounded-full ${circleCls} ${numColor}`}
               >
                 {day}
               </span>
@@ -201,10 +201,10 @@ export function MonthCalendar({
 
   return (
     <div className="select-none">
-      <div className="flex items-center justify-between py-3">
+      <div className="flex items-center justify-between py-1">
         <button
           onClick={() => onMonthChange(py, pm)}
-          className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
+          className="w-10 h-10 flex items-center justify-center text-xl font-light text-black"
           aria-label="前月"
         >
           ‹
@@ -223,14 +223,14 @@ export function MonthCalendar({
         )}
         <button
           onClick={() => onMonthChange(ny, nm)}
-          className="w-11 h-11 flex items-center justify-center text-xl font-light text-black"
+          className="w-10 h-10 flex items-center justify-center text-xl font-light text-black"
           aria-label="翌月"
         >
           ›
         </button>
       </div>
 
-      <div className="grid grid-cols-7 mb-1">
+      <div className="grid grid-cols-7">
         {DOW.map((d, i) => (
           <div
             key={d}

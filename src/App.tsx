@@ -262,7 +262,7 @@ export default function App() {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-4 border-t border-gray-100 mt-2">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-3 pb-3 border-t border-gray-100 mt-1">
           <div className="flex items-baseline justify-between mb-3">
             <p className="text-xs text-gray-400 uppercase tracking-widest">
               {dateLabel}
