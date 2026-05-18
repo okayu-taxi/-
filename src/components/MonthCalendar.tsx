@@ -180,7 +180,7 @@ export function MonthCalendar({
                 {day}
               </span>
               {!isEditMode && count !== undefined && count > 0 && (
-                <span className="text-[10px] font-semibold text-white bg-gray-400 px-1.5 rounded-full leading-tight tabular-nums">
+                <span className="text-[10px] font-semibold text-gray-500 leading-tight tabular-nums">
                   {count}
                 </span>
               )}
